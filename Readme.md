@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
 
-## Getting Started
+# NeoX Web3 Telegram Bot - Hackathon Project
+# NeoHack TG BOT
 
-First, run the development server:
+## Project Vision
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project is a comprehensive Telegram bot that offers a range of functionalities to enhance user engagement and simplify blockchain development. Leveraging the MERN stack, Solidity smart contracts, and AI-powered chatbots, we have created a multi-faceted solution that caters to both users and developers in the NeoX Web3 ecosystem. This is to increase the adaptability of users and layman using the already present distribution channels for Web3 on Telegram. Similarly integrating the data driven Generative A.I with the decentralized and completely transparent  Web3, we have created the first AI integrated Blockchain Explorer.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend & Backend**: MERN Stack (MongoDB, Express.js, React, Node.js)
+- **Blockchain**: Solidity for smart contracts on NeoX blockchain
+- **AI & Data**: Python for vector database and AI chatbot
+- **Bot Platform**: Telegram bot API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+### 1. **Tap to Earn Game**
+A fun and engaging game on Telegram designed to boost user interaction. Users can play and earn real money through gameplay, increasing the number of on-chain transactions. The rewards earned during gameplay are transferred directly to the user's wallet via a smart contract.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. **AI-Integrated Chatbot**
+This feature has multiple functionalities:
+- **Transaction Insights**: By providing a transaction hash (`txnHash`), users can get in-depth, real-time transaction details explained in simple language, tailored for both blockchain developers and laypeople.
+- **Wallet Analysis**: Query wallet details by specifying conditions such as sender, receiver, transaction amount (greater than, less than), to retrieve any relevant transaction information.
+  
+### 3. **NeoX AI (RAG)**
+We built a custom AI chatbot trained on data from Neo's whitepaper, NeoX documentation, and other resources. This assists developers in querying NeoX-related information and smoothens the development process on NeoX.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+1. Launch the Telegram bot using the provided link.
+2. Open the web app through the Telegram bot.
+3. Start playing the "Tap to Earn" game or query transaction details via the AI chatbot.
+4. Use the wallet analysis tool to extract data from specific wallet transactions.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Smart Contract Details
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Transfer Function**: We implemented a smart contract that enables users to transfer rewards earned in the game directly to their wallets. The contract is built on NeoX, ensuring secure and fast transactions.
+  
+- **Cross-Chain Token Swap**: Users can swap tokens between different blockchains, including Ethereum and Arbitrum, using a cross-chain bridge integrated within the smart contract. This expands the user’s flexibility and provides a seamless cross-chain experience.
+
+## Screenshots
+![Screenshot 2024-09-29 133529](https://github.com/user-attachments/assets/ee110e98-60ee-4866-86cc-7e1ac1f47103)
+![Screenshot 2024-09-29 133612](https://github.com/user-attachments/assets/627a33bb-5673-4980-bdc0-569b2d68aa2b)
+![Screenshot 2024-09-29 133641](https://github.com/user-attachments/assets/2da8bb9a-4e91-4395-9bd9-2781c6bcce4a)
+![Screenshot 2024-09-29 133909](https://github.com/user-attachments/assets/6a36710f-1ba2-43e6-8231-906d73f2462f)
+
+## Deployed Link
+- **https://hackathon-nine-eta.vercel.app/837414318**
+
+## Demo Video Link
+- **https://drive.google.com/file/d/1k6ZgjWGha_w8scyFAF7nZA0ZhGdEBfOI/view?usp=sharing**
+
+## Challenges
+
+- **RPC Delays**: Verifying transactions via RPC takes more than 1 minute, which affects the user experience during token transfers and swaps.
+  
+- **Coingecko API Limitations**: The Coingecko API has a strict rate limit, making it challenging to efficiently build and maintain the wallet database for the token swap functionality.
+
+## Future Enhancements
+
+- **DEX and Bridge Functionality**: We plan to expand the bot to include all decentralized exchange (DEX) and bridge functionalities, enabling one-click operations directly through the Telegram bot for seamless cross-chain asset transfers.
+  
+- **NeoX AI RAG Chatbot Improvement**: The AI chatbot can be further enhanced by integrating more NeoX documentation and additional data into the vector database, making it even more powerful for developers.
+  
+- **Cross-Chain Transactions**: Integrating cross-chain transaction functionality within the "Tap to Earn" game to enhance user experience and flexibility when moving assets across different blockchains.
+
+- **Multi-Chain AI Query Builder**: We aim to build a multi-chain AI query builder that allows both developers and non-developers to access blockchain data through natural language processing (NLP) directly on their phones.
+
+## Contributors
+
+- **Rachit Sharma**
+- **Abhishek Garg**
+- **Divyansh Sharma**
+- **Ramzan Khan**
+
+## License
+
+This project does not approve commercial use of the code.
+
+## Contact
+
+For more information, reach out to the team at [abhishek@thewasserstoff.com](mailto:abhishek@thewasserstoff.com).
+
+---
