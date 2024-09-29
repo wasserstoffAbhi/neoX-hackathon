@@ -69,6 +69,10 @@ We built a custom AI chatbot trained on data from Neo's whitepaper, NeoX documen
 
 - **Multi-Chain AI Query Builder**: We aim to build a multi-chain AI query builder that allows both developers and non-developers to access blockchain data through natural language processing (NLP) directly on their phones.
 
+
+For This we need support to build our ecosystem.
+
+
 ## Contributors
 
 - **Rachit Sharma**
@@ -83,5 +87,6 @@ This project does not approve commercial use of the code.
 ## Contact
 
 For more information, reach out to the team at [abhishek@thewasserstoff.com](mailto:abhishek@thewasserstoff.com).
+
 
 ---
