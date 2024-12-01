@@ -67,3 +67,20 @@ export const getNeoXResponse = async (message: string, history: any) => {
   }
 };
 
+export const getSwamp = async () => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`);
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const getAllAvatars = async (chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/avatars`, {chatId: chatId});
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};

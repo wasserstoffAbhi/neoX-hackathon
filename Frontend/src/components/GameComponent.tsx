@@ -4,6 +4,8 @@ import { useState, FC, useEffect, useRef } from "react";
 import BgImage from "./BgImage";
 import Coin from "./Coin";
 import { updateScore } from "../backendServices/userServices";
+import { setUser } from "../redux/features/userDetailsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const GameComponent = ({
   setMute,
@@ -27,6 +29,9 @@ const GameComponent = ({
   const [isStart, setIsStart] = useState(false);
   const [coins, setCoins] = useState<any>([]);
   const pointRef = useRef(score);
+  const dispatch = useDispatch();
+  const prevRef = useRef(score);
+  const { user } = useSelector((state: any) => state?.user);
 
   const handleCoinReachTop = () => {
     setScore((prev: any) => {
@@ -46,7 +51,19 @@ const GameComponent = ({
   useEffect(() => {
     if (isStart) {
       id = setInterval(async () => {
-        await updateScore(chatId, pointRef?.current);
+        console.log(prevRef.current, pointRef?.current)
+        const coin = pointRef.current;
+        if (prevRef.current < coin) {
+          let res = await updateScore(chatId, coin);
+          if (res?.user) {
+            if (res?.user?.points) {
+              dispatch(setUser({ ...user, points: res?.user?.points }));
+            }
+            console.log('here');
+            prevRef.current = coin;
+          }
+          console.log(res, 'response');
+        }
       }, 2000);
     } else {
       clearInterval(id);
