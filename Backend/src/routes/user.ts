@@ -7,13 +7,17 @@ import controller from "../controller";
 const router = Router();
 
 
-router.get("/userData",controller.Users.userdetails)
-router.put("/update-points",controller.Users.updatePoints)
-router.get('/getTransactionInfo',controller.Users.getTransaction)
+router.post("/userData",controller.Users.userdetails);
+router.put("/update-points",controller.Users.updatePoints);
+router.post("/swamp",controller.Users.swamp);
+router.get('/getTransactionInfo',controller.Users.getTransaction);
 router.post('/getTransactionMessages',controller.Users.getTransactionMsg)
 router.post('/getNeox',controller.Users.getNeox)
 router.post('/fillWallet',controller.Users.fillWallet)
 router.post('/queryWallet',controller.Users.queryWallet)
+router.post('/avatars',controller.Users.avatars);
+router.post('/buyAvatar',controller.Users.buyAvatar);
+router.post('/activeAvatar',controller.Users.activeAvatar);
 
 
 export default router;

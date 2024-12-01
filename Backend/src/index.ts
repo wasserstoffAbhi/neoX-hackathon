@@ -3,36 +3,32 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "./models/userSchema";
-import { getTransactionInfo, transferAmount } from "./service/txnHash";
-import { getTransactions } from "./service/walletAdd";
 import cors from "cors";
 import { startWebSocketServer } from './websocket';
 import http from 'http';
-import { finalChain, neoXRag, transactionDetails } from "./service/Agent";
-import { queryFilter } from "./helper";
-import Transaction from "./models/transactions";
+import Avatar from "./models/avatars";
+import router from "./routes";
+
  
 let obj:any = {
 
 }
 
-let txnObj:any = {
-}
-
 dotenv.config();
-
 
 const app = express();
 
 app.use(cors())
-app.use(express.json());
 
 const corsOptions = {
   origin: "*",
 };
 app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded())
+
+app.use("/",router);
 
 const server = http.createServer(app);
 
@@ -87,19 +83,35 @@ bot.on("message:text", async(ctx) => {
 
 });
 
-
-export type filterBlockObject={
-  $field : string,
-  $op : string,
-  $value : any
-}
-
-
 server.listen(8000, async () => {
   console.log("Server is running on port 8000");
   // Connect to MongoDB
   try {
     await mongoose.connect(process.env.MONGO_URI || "");
+    // let avatar = [
+    //   {
+    //     url: "https://cdn.pixabay.com/photo/2016/08/20/05/38/avatar-1606916_960_723.png",
+    //     rank: 1,
+    //     price: 100,
+    //     rankType: "legendary"
+    //   },
+    //   {
+    //     url: "https://cdn.pixabay.com/photo/2016/08/20/05/38/avatar-1606916_960_721.png",
+    //     rank: 3,
+    //     price: 100,
+    //     rankType: "common"
+    //   },
+    //   {
+    //     url: "https://cdn.pixabay.com/photo/2016/08/20/05/38/avatar-1606916_960_722.png",
+    //     rank: 2,
+    //     price: 100,
+    //     rankType: "rare"
+    //   },
+    // ]
+    // for(const ava of avatar){
+    //   await new Avatar(ava).save();
+    // }
+    
     console.log("Connected to MongoDB");
     startWebSocketServer(server);
     bot.start();
@@ -107,13 +119,5 @@ server.listen(8000, async () => {
     console.error("Failed to connect to MongoDB", error);
   }
 });
-
-
-// transferAmount("0x28007dE685867d90551d3c73F2e2BeF0cb037a9E","0.0001")
-
-// neoXRag("how to set up neoX",[])
-
-
-// getTransactions("0x8697477f54897ACADD7673B7c325ac31bd7F080d")
 
 

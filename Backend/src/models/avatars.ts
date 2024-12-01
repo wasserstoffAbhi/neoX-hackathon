@@ -6,6 +6,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 interface IAvatar extends Document {
     url: string;
     rank: number;
+    rankType:string
 }
 
 const avatarSchema: Schema = new Schema({
@@ -17,6 +18,14 @@ const avatarSchema: Schema = new Schema({
   rank: {
     type: Number,
     required: true
+  },
+  price:{
+    type: Number,
+    default: 0
+  },
+  rankType:{
+    type: String,
+    default: "common"
   }
 });
 

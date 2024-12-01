@@ -6,11 +6,17 @@ interface IUser extends Document {
     username?: string;
     points: number;
     token: number;
-    avatar: [
-      {
-        id: Schema.Types.ObjectId,
-        count: number;
-      }
+    activeAvatarId: Schema.Types.ObjectId;
+    swampCount : number;
+    lastSwampAt: number;
+    avatar: {
+      id: Schema.Types.ObjectId,
+      count: number;
+    }[];
+    unlocked: {
+      id: Schema.Types.ObjectId;
+      count: number;
+    }[ 
     ]
 }
 
@@ -31,6 +37,18 @@ const userSchema: Schema = new Schema({
     type: Number,
     default : 0
   },
+  swampCount:{
+    type: Number,
+    default: 0
+  },
+  lastSwampAt:{
+    type: Number,
+    default: 0
+  },
+  activeAvatarId:{
+    type: Schema.Types.ObjectId,
+    ref: 'Avatar'
+  },
     // Add the avatar field to the User schema with id and count fields and reference the Avatar model and It should be array of objects and default value should be empty array and the id must be unique
   avatar:[
     {
@@ -41,10 +59,24 @@ const userSchema: Schema = new Schema({
       },
       count:{
         type: Number,
-        default: 0
+        default: 1
+      }
+    }
+  ],
+  unlocked: [
+    {
+      id:{
+        type: Schema.Types.ObjectId,
+        ref: 'Avatar',
+        unique: true
+      },
+      count:{
+        type: Number,
+        default: 1
       }
     }
   ]
+
 });
 
 // Create the User model from the schema
