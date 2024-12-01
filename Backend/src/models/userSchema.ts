@@ -9,6 +9,7 @@ interface IUser extends Document {
     activeAvatarId: Schema.Types.ObjectId;
     swampCount : number;
     lastSwampAt: number;
+    walletAddress: string;
     avatar: {
       id: Schema.Types.ObjectId,
       count: number;
@@ -32,6 +33,10 @@ const userSchema: Schema = new Schema({
   points: {
     type: Number,
     default: 0
+  },
+  walletAddress:{
+    type: String,
+    default: ""
   },
   token:{
     type: Number,
