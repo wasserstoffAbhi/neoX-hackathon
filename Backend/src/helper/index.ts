@@ -41,3 +41,26 @@ export const queryFilter = (responseQuery:any) => {
   let out={"$and":query}
   return out
 };
+
+
+export function extractAndParseJSON(responseString:string) {
+  // Regular expression to capture content between ```json and ```
+  const regex = /```json([\s\S]*?)```/;
+  
+  // Extract the JSON string
+  const match = responseString.match(regex);
+  console.log(match)
+  if (match && match[1]) {
+    try {
+      // Parse the JSON string
+      const parsedData = JSON.parse(match[1].trim());
+      return parsedData;
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null;
+    }
+  }
+  
+  console.error('No valid JSON block found in the response.');
+  return null;
+}
