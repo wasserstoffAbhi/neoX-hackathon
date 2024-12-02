@@ -3,7 +3,7 @@ import User from "../models/userSchema";
 import { finalChain, neoXRag, transactionDetails } from "../service/Agent";
 import { getTransactions } from "../service/walletAdd";
 import Transaction from "../models/transactions";
-import { queryFilter,extractAndParseJSON, fetchReward } from "../helper";
+import { queryFilter,extractAndParseJSON, fetchReward, fetchAvatar, getRandomTapReward, getRandomTokenReward } from "../helper";
 import { getTransactionInfo } from "../service/txnHash";
 import { DbService } from "../service/dbService";
 import { transferTokensToUser } from "../wallet";
@@ -196,32 +196,31 @@ export class Users {
       }
       user.swampCount -= 1;
       await user.save();
+      let response = {};
       const reward = fetchReward();
-      await transferTokensToUser(user.walletAddress,"0.001");
-      // if(reward == "Tokens"){
-      //   const tokAmount = getRandomTokenReward();
-      //   const user = await User.findOneAndUpdate(
-      //     { chatId },
-      //     { $inc: { token:  tokAmount} },
-      //     { new: true }
-      //   )
-      //   console.log("User:",user)
+      if(reward == "Tokens"){
+        const tokAmount = getRandomTokenReward();
+        const updatedUser = await User.findOneAndUpdate(
+          { chatId },
+          { $inc: { token:  tokAmount} },
+          { new: true }
+        )
+        await transferTokensToUser(user.walletAddress,tokAmount.toString(),);
 
-
-      //   response = {data:tokAmount,currentPoints:user?.points,type:"Tokens",message:"Token Reward Swamp Successfully"};
-      // }else if(reward == "Avatar"){
-      //   const rank = fetchAvatar();
-      //   const avatar:any = await DbService.fetchAvatarByRank(rank,chatId);
-      //   response = {data:avatar,type:"Avatar",message:"Avatar Reward Swamp Successfully"};
-      // }else if(reward == "BonusTaps"){
-      //   const tapPoints = getRandomTapReward()
-      //   await User.findOneAndUpdate(
-      //     { chatId },
-      //     { $inc: { points:  tapPoints} },
-      //     { new: true }
-      //   );
-      //   response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
-      // }
+        response = {data:tokAmount,currentPoints:updatedUser?.points,type:"Tokens",message:"Token Reward Swamp Successfully"};
+      }else if(reward == "Avatar"){
+        const rank = fetchAvatar();
+        const avatar:any = await DbService.fetchAvatarByRank(rank,chatId);
+        response = {data:avatar,type:"Avatar",message:"Avatar Reward Swamp Successfully"};
+      }else if(reward == "BonusTaps"){
+        const tapPoints = getRandomTapReward()
+        await User.findOneAndUpdate(
+          { chatId },
+          { $inc: { points:  tapPoints} },
+          { new: true }
+        );
+        response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
+      }
       return res.status(200).send({response:"Swamp Successful",data:null});
     } catch (error) {
       console.log(error)

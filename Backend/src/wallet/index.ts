@@ -102,5 +102,3 @@ export async function transferTokensToContract(from:any, amount:any, privateKey:
       throw error;
     }
 }
-
-// createWallet()
