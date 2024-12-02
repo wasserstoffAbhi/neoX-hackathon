@@ -67,3 +67,66 @@ export const getNeoXResponse = async (message: string, history: any) => {
   }
 };
 
+export const getSwamp = async () => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`);
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const claimSwamp = async (id: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`, { chatId: id });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const getAllAvatars = async (chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/avatars`, { chatId: chatId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const buyAvatarCall = async (chatId: string, avatarId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/buyAvatar`, { chatId, avatarId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const sellAvatarCall = async (chatId: string, avatarId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/sellAvatar`, { chatId, avatarId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const setActiveAvatarCall = async (avatarId: string, chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/activeAvatar`, { avatarId, chatId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const getGiftSwampCall = async (chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`, { chatId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+

@@ -6,23 +6,39 @@ import ChatWindow from "../../components/ChatWindow";
 import LandingPage from "../../components/LandingPage";
 import { validateChatId } from "@/src/backendServices/userServices";
 import GameComponent from "@/src/components/GameComponent";
+import { useDispatch, useSelector } from "react-redux"
+import { setUser } from "@/src/redux/features/userDetailsSlice";
 
 export default function Home({ params }: { params: { chatId: string } }) {
-  const [click, setClick] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const handleClickk = () => {};
   const [play, setPlay] = useState(false);
   const [page, setPage] = useState("landing");
   const [isMute, setIsMute] = useState(false);
   const [score, setScore] = useState<number>(0);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: any) => state?.user);
+  console.log(user, 'user');
 
   const getData = async () => {
-    const data = await validateChatId(params?.chatId);
-    setLoading(false);
-    if (data?.points != null && data?.points >= 0) {
-      setScore(data?.points);
-    } else {
+    try {
+      const data = await validateChatId(params?.chatId);
+      console.log(data, 'data');
+      setLoading(false);
+      if (data && data?.data) {
+        dispatch(setUser(data?.data));
+        console.log(data?.data, 'data')
+        if (data?.data?.points != null && data?.data?.points >= 0) {
+          setScore(data?.data?.points);
+        } else {
+          setError(true);
+        }
+      }
+      else {
+        setError(true);
+      }
+
+    } catch (error) {
       setError(true);
     }
   };
@@ -42,12 +58,9 @@ export default function Home({ params }: { params: { chatId: string } }) {
           <p>Loading...</p>
         </div>
       ) : (
-        <div className="">
-          <AudioPlayer play={play} mute={isMute} />
+        <div className="h-screen overflow-hidden">
           {page === "landing" ? (
-            <LandingPage setPage={setPage} setPlay={setPlay} />
-          ) : page === "chat" ? (
-            <ChatWindow setPage={setPage} chatId={params?.chatId} />
+            <LandingPage chatId={params?.chatId} setPage={setPage} setPlay={setPlay} />
           ) : (
             <GameComponent
               play={play}

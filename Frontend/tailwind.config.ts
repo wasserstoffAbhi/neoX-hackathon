@@ -12,6 +12,15 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      animation: {
+        shake: 'shake 0.2s infinite ease-in-out',
+      },
+      keyframes: {
+        shake: {
+          '0%, 100%': { transform: 'translateX(-2px)', rotate: '-2deg' },
+          '50%': { transform: 'translateX(3px)', rotate: '2deg' },
+        },
+      },
     },
   },
   plugins: [],

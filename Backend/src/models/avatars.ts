@@ -14,7 +14,6 @@ const avatarSchema: Schema = new Schema({
   url: {
     type: String,
     required: true,
-    unique: true
   },
   rank: {
     type: Number,

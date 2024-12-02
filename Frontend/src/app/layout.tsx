@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Wrapper } from "../components/Wrapper";
+import { Provider } from "react-redux";
+import store from "../redux/store";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Wrapper>{children}</Wrapper>
+        <Provider store={store}>
+          <Wrapper>{children}</Wrapper>
+        </Provider>
       </body>
     </html>
   );

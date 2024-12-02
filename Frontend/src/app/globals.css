@@ -75,3 +75,283 @@
 .moveUp {
   animation: moveUp 2s ease-in-out forwards;
 }
+
+.flip-card {
+  border-radius: 10px;
+  background-color: transparent;
+  perspective: 1000px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 40%;
+  z-index: -1;
+}
+
+.flip-card-inner {
+  position: relative;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transform-origin: center;
+}
+
+.flip-card.click-flip .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.con-jump{
+  animation: 3s jump infinite alternate;
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flip-card-front {
+  background-color: #fff ;
+  color: black;
+}
+
+.flip-card-back {
+  color: white;
+  transform: rotateY(180deg);
+}
+
+.box {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 40%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+}
+
+.box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.point {
+  height: 5px;
+  width: 8px;
+}
+
+.gift {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 40%;
+  z-index: -1;
+}
+
+.lid {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 50%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.jump {
+  animation: 1s jump infinite linear;
+}
+
+.drop {
+  animation: 1s drop;
+  bottom: -30%;
+}
+
+.rise {
+  animation: 2.5s rise;
+  bottom: 50%;
+  width: 250px;
+  height: 280px;
+  transform: translate(-50%);
+}
+
+/* .boxRise {
+  animation: 1s boxRise;
+  bottom: 55%;
+} */
+
+.move {
+  animation: 1s wiggle infinite linear;
+}
+
+.rotating {
+  animation: 1s rotating;
+}
+
+.rotated {
+  transform: rotate(145deg) translate(-70%, -170px);
+}
+
+.riseToSide {
+  animation: 1s riseToSide;
+}
+
+.float {
+  animation: 1.5s float infinite;
+}
+
+/* .flipx {
+  animation: 1s flipx;
+} */
+
+@keyframes riseToSide {
+  0% {
+    bottom: 40%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    bottom: 90%;
+    transform: translate(100%, -100%) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  0% {
+    bottom: 40%;
+    width: 100px;
+    height: 100px;
+  }
+  50% {
+    bottom: 30%;
+    width: 150px;
+    height: 150px;
+  }
+  70% {
+    bottom: 60%;
+    width: 280px;
+    height: 150px;
+  }
+  80% {
+    bottom: 50%;
+    width: 250px;
+    height: 200px;
+  }
+  90% {
+    bottom: 60%;
+    width: 250px;
+    height: 280px;
+  }
+  100% {
+    bottom: 50%;
+    width: 250px;
+    height: 280px;
+  }
+}
+
+@keyframes boxRise {
+  from {
+    bottom: 130%;
+  }
+  to {
+    bottom: 40%;
+  }
+}
+
+@keyframes drop {
+  from {
+    bottom: 40%;
+  }
+  to {
+    bottom: -30%;
+  }
+}
+
+@keyframes wiggle {
+  10%,
+  90% {
+    transform: translate(-50%) translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate(-50%) translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate(-50%) translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate(-50%) translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes rotating {
+  0% {
+    transform: rotate(0deg) translate(-50%, 0);
+  }
+
+  100% {
+    transform: rotate(145deg) translate(-70%, -170px);
+  }
+}
+
+@keyframes jump {
+  from {
+    bottom: 0;
+  }
+  to {
+    bottom: 20em;
+  }
+}
+
+
+@keyframes flipx{
+  from {
+      -webkit-transform: rotateY(180deg);
+  }
+  
+  to {
+      -webkit-transform: rotateY(-180deg);
+  }
+  
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+transform: translateY(-10%);
+  }
+  40% {
+transform: translateY(0);
+  }
+  60% {
+transform: translateY(5%);
+  }
+  80% {
+transform: translateY(-5%);
+  }
+  100% {
+transform: translateY(0%);
+  }
+}
+
