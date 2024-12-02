@@ -143,9 +143,7 @@ export class DbService {
         throw new Error("User not found");
       }
       const avatars = await Avatar.find({ rankType: rank });
-      console.log(avatars);
       const avatar = avatars[Math.floor(Math.random() * avatars.length)];
-      console.log(avatar);
       const unlockedAvatar = user.unlocked;
       // Check if user already has The unlocked avatar in his unlocked list
       const unlocked = unlockedAvatar.find(

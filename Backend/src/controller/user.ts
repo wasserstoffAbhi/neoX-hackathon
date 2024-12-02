@@ -35,28 +35,28 @@ export class Users {
 
   static updatePoints = async (req: Request, res: Response) => {
     const { chatId, points } = req.body;
-    if(points > 500) throw new Error("MAx Tap Limit Exceeded");
     console.log(chatId, points, "..............");
-  
+    
     try {
       const user = await User.findOne({ chatId });
-  
+      
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-  
+      
       let swampActive = false;
       const lastRewardedPoints = user.lastSwampAt || 0;
+      if(user.points - points > 500) throw new Error("MAx Tap Limit Exceeded");
   
       // Check if the points have crossed a 1K milestone since the last reward
-      const milestonesCrossed = Math.floor(points / 1000) - Math.floor(lastRewardedPoints / 1000);
+      const milestonesCrossed = Math.floor(points / 10) - Math.floor(lastRewardedPoints / 10);
   
       if (milestonesCrossed > 0) {
         // Increment swamp count by the number of milestones crossed
         user.swampCount = (user.swampCount || 0) + milestonesCrossed;
   
         // Update the last rewarded points to the most recent milestone
-        user.lastSwampAt = Math.floor(points / 1000) * 1000;
+        user.lastSwampAt = Math.floor(points / 10) * 10;
   
         swampActive = true;
       }
@@ -77,9 +77,6 @@ export class Users {
       res.status(500).json({ message: "Failed to update points", error });
     }
   };
-  
-  
-
 
   static getTransaction = async(req:Request,res:Response)=>{
     const { hash,chatId } = req.body;

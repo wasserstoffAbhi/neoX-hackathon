@@ -9,6 +9,7 @@ import http from 'http';
 import Avatar from "./models/avatars";
 import router from "./routes";
 import bot from "./bot";
+import { avatars } from "./seed/rabbits";
 
  
 
@@ -37,6 +38,10 @@ server.listen(8000, async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI || "");
     startWebSocketServer(server);
+    // for(const avatar of avatars){
+    //   const newAvatar = new Avatar(avatar);
+    //   await newAvatar.save();
+    // } 
     bot.start();
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);

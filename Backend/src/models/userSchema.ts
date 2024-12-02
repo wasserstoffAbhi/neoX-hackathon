@@ -7,6 +7,7 @@ interface IUser extends Document {
     points: number;
     token: number;
     activeAvatarId: Schema.Types.ObjectId;
+    privateKey: string;
     swampCount : number;
     lastSwampAt: number;
     walletAddress: string;
@@ -35,6 +36,10 @@ const userSchema: Schema = new Schema({
     default: 0
   },
   walletAddress:{
+    type: String,
+    default: ""
+  },
+  privateKey:{
     type: String,
     default: ""
   },
