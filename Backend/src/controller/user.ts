@@ -123,7 +123,7 @@ export class Users {
     try {
       const user = await User.findOne({chatId});
       if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
-      await getTransactions("0x8697477f54897ACADD7673B7c325ac31bd7F080d");
+      await getTransactions(walletAddress);
       await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
       res.status(200).send({status:true, message:"Transaction Found",data: "Wallet Has been synced with RPC. You can now query the wallet"});
     } catch (error) {
