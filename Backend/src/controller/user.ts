@@ -1,17 +1,14 @@
 import { Request, response, Response } from "express";
-import axios from "axios";
-import mongoose from "mongoose";
-import url from "node:url"
 import User from "../models/userSchema";
 import { finalChain, neoXRag, transactionDetails } from "../service/Agent";
 import { getTransactions } from "../service/walletAdd";
 import Transaction from "../models/transactions";
-import { queryFilter,extractAndParseJSON, fetchReward, fetchAvatar, getRandomTokenReward, getRandomTapReward } from "../helper";
+import { queryFilter,extractAndParseJSON, fetchReward } from "../helper";
 import { getTransactionInfo } from "../service/txnHash";
 import { DbService } from "../service/dbService";
-// import { transferTokens } from "../helper/transaction";
-import Web3 from "web3";
-import { transferTokens } from "../helper/transaction";
+import { transferTokensToUser } from "../wallet";
+
+
 
 
 let txnObj:any = {
@@ -172,29 +169,35 @@ export class Users {
 
       return res.status(200).send({message:"Avatar Bought Successfully",data:null});
     } catch (error) {
+      console.log(error)
       return res.status(500).send({message:"Failed to buy Avatar",data:null});
+    }
+  }
+
+  static sellAvatar = async(req:Request,res:Response)=>{
+    try {
+      const { chatId, avatarId } = req.body;
+      await DbService.removeAvatarFromUser(chatId,avatarId);
+      return res.status(200).send({message:"Avatar Sold Successfully",data:null});
+    } catch (error) {
+      return res.status(500).send({message:"Failed to sell Avatar",data:null});
     }
   }
 
   static swamp = async(req:Request,res:Response)=>{
     try {
-      const address = "0xA9a5aD2979781d01364de07Eb8264cBEfc81737d"
-      const token = "0.000000001"
-      const amount = Web3.utils.toWei(token, "ether")
-      const privateKey = 'ede6c946f8dbd2bc62ee92b2b1b03f7fe4ca487d25158fc467f242dacc3703e5'
-      const transaction = transferTokens(address,amount,privateKey)
-      // const { chatId } = req.body;
-      // const user = await User.findOne({ chatId });
-      // if (!user) {
-      //   return res.status(404).send({message:"User not found",data:null});
-      // }
-      // if(user.swampCount == 0){
-      //   return res.status(200).send({message:"No Swamp Available",data:null});
-      // }
-      // user.swampCount -= 1;
-      // await user.save();
-      // const reward = fetchReward();
-      // let response = {};
+      const { chatId } = req.body;
+      const user = await User.findOne({ chatId });
+      if (!user) {
+        return res.status(404).send({message:"User not found",data:null});
+      }
+      if(user.swampCount == 0){
+        return res.status(200).send({message:"No Swamp Available",data:null});
+      }
+      user.swampCount -= 1;
+      await user.save();
+      const reward = fetchReward();
+      await transferTokensToUser(user.walletAddress,"0.001");
       // if(reward == "Tokens"){
       //   const tokAmount = getRandomTokenReward();
       //   const user = await User.findOneAndUpdate(
@@ -219,7 +222,7 @@ export class Users {
       //   );
       //   response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
       // }
-      return res.status(200).send(response);
+      return res.status(200).send({response:"Swamp Successful",data:null});
     } catch (error) {
       console.log(error)
       return res.status(500).send({message:"Failed to Swamp",data:null});

@@ -1,76 +1,6 @@
 import Avatar from "../models/avatars";
 import User from "../models/userSchema";
-
-// const userSchema: Schema = new Schema({
-//   chatId: {
-//     type: Number,
-//     required: true,
-//     unique: true
-//   },
-//   username: {
-//     type: String,
-//   },
-//   points: {
-//     type: Number,
-//     default: 0
-//   },
-//   token:{
-//     type: Number,
-//     default : 0
-//   },
-//   activeAvatarId:{
-//     type: Schema.Types.ObjectId,
-//     ref: 'Avatar'
-//   },
-//     // Add the avatar field to the User schema with id and count fields and reference the Avatar model and It should be array of objects and default value should be empty array and the id must be unique
-//   avatar:[
-//     {
-//       id:{
-//         type: Schema.Types.ObjectId,
-//         ref: 'Avatar',
-//         unique: true
-//       },
-//       count:{
-//         type: Number,
-//         default: 1
-//       }
-//     }
-//   ],
-//   unlocked: [
-//     {
-//       id:{
-//         type: Schema.Types.ObjectId,
-//         ref: 'Avatar',
-//         unique: true
-//       },
-//       count:{
-//         type: Number,
-//         default: 1
-//       }
-//     }
-//   ]
-
-// });
-
-// const avatarSchema: Schema = new Schema({
-//   url: {
-//     type: String,
-//     required: true,
-//     unique: true
-//   },
-//   rank: {
-//     type: Number,
-//     required: true
-//   },
-//   price:{
-//     type: Number,
-//     default: 0
-//   },
-//   rankType:{
-//     type: String,
-//     default: "common"
-//   }
-// });
+import { transferTokensToContract, transferTokensToUser } from "../wallet";
 
 export class DbService {
 
@@ -170,13 +100,15 @@ export class DbService {
 
   static assignAvatarToUser = async (chatId: number, avatarId: any) => {
     try {
-      // Fetch user based on chatId
       const user = await User.findOne({ chatId });
-
+      
       if (!user) {
         throw new Error("User not found");
       }
-      // check Avatar exist in the unlocked user Avatars schema
+      const avatar = await Avatar.findById(avatarId);
+      if (!avatar) {
+        throw new Error("Avatar not found");
+      }
       const unlockedAvatar = user.unlocked.find(
         (ua:any) => ua.id.toString() === avatarId
       );
@@ -184,27 +116,64 @@ export class DbService {
         throw new Error("User doesn't Have this avatar in watchlist");
       }
 
-      // now Remove the avatar from the unlocked list
+      if (user.token < avatar.price) {
+        throw new Error("Insufficient Balance to buy the avatar");
+      }
+      
+      await transferTokensToContract(user.walletAddress, avatar.price.toString(),user.privateKey);
+      
+      user.token -= avatar.price;
+
       let newUnlocked = user.unlocked.filter(
         (ua:any) => ua.id.toString() !== avatarId
       );
       user.unlocked = newUnlocked.length > 0 ? newUnlocked : [];
-      // Check if user already owns the avatar
+
       const userAvatar = user.avatar.find(
         (ua:any) => ua.id.toString() === avatarId
       );
 
-      // if user already owns the avatar, increment the count
       if (userAvatar) {
         userAvatar.count += 1;
       } else {
-        // if user doesn't own the avatar, add the avatar to the user's avatar list
         user.avatar.push({ id: avatarId, count: 1});
       }
       await   user.save();
     } catch (error) {
       console.error("Error assigning avatar to user:", error);
       throw new Error("Failed to assign avatar to user");
+    }
+  }
+
+  static removeAvatarFromUser = async (chatId: number, avatarId: any) => {
+    try {
+      const user = await User.findOne({ chatId });
+      
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const avatar = await Avatar.findById(avatarId);
+      if (!avatar) {
+        throw new Error("Avatar not found");
+      }
+      const userAvatar = user.avatar.find(
+        (ua:any) => ua.id.toString() === avatarId
+      );
+      
+      if (userAvatar && userAvatar.count > 1) {
+        userAvatar.count -= 1;
+      } else{
+        throw new Error("User doesn't own the avatar");
+      }
+
+      let price = avatar.price/2;
+      await transferTokensToUser(user.walletAddress, price.toString());
+      
+      user.token += price;
+      
+      await user.save();
+    } catch (error) {
+      throw new Error("Failed to remove avatar from user");
     }
   }
 

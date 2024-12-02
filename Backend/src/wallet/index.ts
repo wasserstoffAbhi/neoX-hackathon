@@ -2,11 +2,12 @@
 import Web3 from "web3"; 
 import createHash from "create-hash";
 import { abi } from "./abi";
+import dotenv from "dotenv";
 
-const rpcUrl = 'https://testnet.rpc.banelabs.org'; // Replace with NeoX RPC URL
+const rpcUrl = 'https://mainnet-2.rpc.banelabs.org'; // Replace with NeoX RPC URL
 const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
-const contractAddress = "0x3BdaDa86C5C050E19462FcB4C63949583086Ca0a";
-
+const contractAddress = "0xEf486A477c2C7C0059bF38Ad1D6ec289BDECc07D";
+dotenv.config();
 /**
  * Create a wallet based on Telegram chat ID and a secret key.
  * @param {string} chatId - The Telegram chat ID.
@@ -34,29 +35,32 @@ export function createWallet(chatId:any) {
 
 const contract = new web3.eth.Contract(abi, contractAddress);
 
-export async function transferTokens(recipient: string, amount: string, privateKey: string) {
+export async function transferTokensToUser(recipient: string, amount: string) {
     try {
         // Get the sender's address from the private key
-   
-        console.log("amount: ", amount)
+        const amountInWei = web3.utils.toWei(amount, "ether");
+        console.log("amount: ", amountInWei)
         const gasPrice = await web3.eth.getGasPrice()
         // Prepare the transaction data
-        const gasEstimate = await contract.methods.sendEther(recipient, amount).estimateGas({
-          from: "0x5d0037F32Ec69BbE45ae1Eb83fDE378B360D3a78",
-          value: amount
+        const gasEstimate = await contract.methods.sendEther(recipient, amountInWei).estimateGas({
+          from: "0x1FC0Cae5752d7CbD6e3875Ac348A840c87F8202a",
+          value: amountInWei
       });
-        const tx = {
-          from: "0x5d0037F32Ec69BbE45ae1Eb83fDE378B360D3a78",
+      const tx = {
+          from: "0x1FC0Cae5752d7CbD6e3875Ac348A840c87F8202a",
           to: contractAddress,
           gas: gasEstimate,
           gasPrice: gasPrice,
-          value: amount,
-          data: contract.methods.sendEther(recipient, amount).encodeABI()
+          value: amountInWei,
+          data: contract.methods.sendEther(recipient, amountInWei).encodeABI()
       };
-        // Sign the transaction
-        const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-        return receipt;
+      let privateKey = process.env.CONTRACT_PRIVATE_KEY as string;
+      console.log("Transaction Details:", tx,privateKey);
+      // Sign the transaction
+      const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+      console.log("Signed Transaction:", signedTx);
+      await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
     } catch (error) {
         console.error("An error occurred during the transaction:", error);
     }
@@ -92,11 +96,7 @@ export async function transferTokensToContract(from:any, amount:any, privateKey:
       const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
 
       // Send the signed transaction
-      const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-      console.log("Transaction Successful:", receipt);
-
-      return receipt;
+      await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
   } catch (error) {
       console.error("An error occurred during the transaction:", error);
       throw error;

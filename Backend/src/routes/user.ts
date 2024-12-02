@@ -17,6 +17,7 @@ router.post('/fillWallet',hasValidAmount("fillWallet"),controller.Users.fillWall
 router.post('/queryWallet',hasValidAmount("queryWallet"),controller.Users.queryWallet)
 router.post('/avatars',controller.Users.avatars);
 router.post('/buyAvatar',controller.Users.buyAvatar);
+router.post('sellAvatar',controller.Users.sellAvatar);
 router.post('/activeAvatar',controller.Users.activeAvatar);
 
 
