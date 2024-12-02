@@ -1,33 +1,25 @@
 import { Bot, InlineKeyboard } from "grammy";
 import User from "../models/userSchema";
 import { createWallet } from "../wallet";
+import axios from "axios";
 
 
-let obj:any = {
-
-}
+let userStates:any = {};
 
 
 const bot = new Bot(process.env.BOT_TOKEN || "");
 bot.command("start", async (ctx) => {
+  console.log("NEodkdsnkldsnkdsnlidsnflkdsnfklndslkfndslkfndsk")
   const chatId = ctx.chat.id;
   const username = ctx.chat.username;
-  const chat = await bot.api.getChat(chatId);
   let user = await User.findOne({ chatId: chatId });
-  console.log(user)
   
   if (!user) {
     let wallet = createWallet(chatId);
 
     user = new User({ chatId, username, points: 0,walletAddress:wallet.address, privateKey:wallet.privateKey, token:0 });
     await user.save();
-
-    ctx.reply("Welcome! You are now registered.");
-  } else {
-    ctx.reply(
-      `Welcome back, ${username || "user"}! You have ${user.points} points ${user.walletAddress}.`
-    );
-  }
+  } 
   let walletAddress = user.walletAddress;
   let balance =  user.token;
   const message = `
@@ -36,7 +28,7 @@ bot.command("start", async (ctx) => {
     Here are your wallet details:\n
     👛 Wallet Address :\`${walletAddress}\`(Tap To Copy)\n\n
 
-    💰 Balance : ${balance}\n
+    💰 Balance : ${balance} GAS\n
 
     Use the buttons below to:
     🎮 Play the Game
@@ -47,9 +39,6 @@ bot.command("start", async (ctx) => {
 
   const keyboard = 
     new InlineKeyboard([
-      [
-        {text:"copy wallet address",callback_data:"copy_wallet_address"},
-      ],
       [
         InlineKeyboard.url( "🎮 Tap & Earn", "https://google.com" ),
       ],
@@ -65,6 +54,9 @@ bot.command("start", async (ctx) => {
 
       ],
       [
+        {text:"Generate Avatar",callback_data:"generate_avatar"},
+      ],
+      [
         {text:"Deposit",callback_data:"deposit"},
         {text:"Withdraw",callback_data:"withdraw"}
       ]
@@ -76,26 +68,36 @@ bot.command("start", async (ctx) => {
   });
 });
 
-// Reply to any text message
-// bot.on("message:text", async(ctx) => {
-//   if(!obj.hasOwnProperty(ctx.chatId)) obj[ctx.chatId] = [];
-//   // Only store the recent 2 messages
-//   if(obj[ctx.chatId].length >= 2) obj[ctx.chatId].shift();
-//   obj[ctx.chatId].push(ctx.message.text);
-//   console.log(obj)
+bot.callbackQuery("generate_avatar", async (ctx) => {
+  const userId = ctx.from.id;
+  userStates[userId] = "awaiting_prompt"; // Set user state
+  await ctx.answerCallbackQuery(); // Respond to the callback
+  ctx.reply("Currently We Have Trained on One Avatar *Rubicorn*. \n Please enter your prompt:",{
+    parse_mode:"Markdown"
+  });
+});
 
-//   // write a regex code to match the 32 biit hex string or 64 bit hex string and console it's type and it should start with 0x
-//   const regex64 = /0x[a-fA-F0-9]{64}/;
-//   const regex32 = /0x[a-fA-F0-9]{32}/;
-//   if(regex64.test(ctx.message.text)){
-//     ctx.reply("It's a 64 bit hex string")
-//   } else if(regex32.test(ctx.message.text)){
-//     ctx.reply("It's a 32 bit hex string")
-//   } else {
-//     ctx.reply("It's a 32 bit hex string")
-//   }
+// Listen for user messages (prompts)
+bot.on("message:text", async(ctx) => {
+  const userId = ctx.from.id;
 
-// });
+  // Check if the user is in the awaiting_prompt state
+  if (userStates[userId] === "awaiting_prompt") {
+      const prompt = ctx.message.text;
+
+      // Process the prompt (you can replace this with your logic)
+      const response = await axios.post("https://2dbb-2401-4900-8841-cae1-eaf5-689c-1402-a8/generate", { prompt });
+      console.log(response)
+      // Reset the user's state
+      userStates[userId] = null;
+
+
+      // Send the file to the user
+      await ctx.replyWithPhoto(response.data);
+  } else {
+      ctx.reply("Please click the button to start sending a prompt.");
+  }
+});
 
 
 export default bot;

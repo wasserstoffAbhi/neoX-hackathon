@@ -34,20 +34,18 @@ export async function getTransactions(address:string) {
       let balance = await getWalletBalance(address);
       console.log(balance);
       let count = 0;
-      // for(const transaction of transactions){
-      //   console.log(count++,transaction.hash);
-      //   const txnExist = await Transaction.findOne({ txnHash: transaction.hash });
-      //   if(txnExist){
-      //     continue;
-      //   }
-      //   const txn = await getTransactionInfo(transaction.hash);
-      //   txnArray.push(txn);
-      //   await Transaction.create(txn);
-      //   await new Promise(resolve => setTimeout(resolve, 20000));
-      // }
-      // add all the transactions to the mongodb database
+      for(const transaction of transactions){
+        console.log(count++,transaction.hash);
+        const txnExist = await Transaction.findOne({ txnHash: transaction.hash });
+        if(txnExist){
+          continue;
+        }
+        const txn = await getTransactionInfo(transaction.hash);
+        txnArray.push(txn);
+        await Transaction.create(txn);
+        await new Promise(resolve => setTimeout(resolve, 20000));
+      }
       await Wallet.create({ address: address,balance:balance,txnCount:203 });
-      return transactions;
     }else {
       const transactions = await Transaction.find({ $or: [{ from: address }, { to: address }] });
       return transactions;
