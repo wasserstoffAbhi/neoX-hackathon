@@ -58,7 +58,7 @@ export default function Home({ params }: { params: { chatId: string } }) {
           <p>Loading...</p>
         </div>
       ) : (
-        <div className="">
+        <div className="h-screen overflow-hidden">
           {page === "landing" ? (
             <LandingPage setPage={setPage} setPlay={setPlay} />
           ) : page === "chat" ? (

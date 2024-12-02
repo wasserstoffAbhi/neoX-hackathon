@@ -6,6 +6,7 @@ import Coin from "./Coin";
 import { updateScore } from "../backendServices/userServices";
 import { setUser } from "../redux/features/userDetailsSlice";
 import { useDispatch, useSelector } from "react-redux";
+import GiftBoxAnimation from "./GiftBox";
 
 const GameComponent = ({
   setMute,
@@ -31,9 +32,10 @@ const GameComponent = ({
   const pointRef = useRef(score);
   const dispatch = useDispatch();
   const prevRef = useRef(score);
-  const [getGift, setGetGift] = useState(false);
+  const [getGift, setGetGift] = useState(true);
   const { user } = useSelector((state: any) => state?.user);
 
+  const totalCoinsRef = useRef<HTMLDivElement>(null);
   const handleCoinReachTop = () => {
     setScore((prev: any) => {
       pointRef.current = prev + 1;
@@ -47,6 +49,10 @@ const GameComponent = ({
       <Coin key={prevCoins.length} onCoinReachTop={handleCoinReachTop} />,
     ]);
   };
+
+  const handleChangeGiftClick = () => {
+    setGetGift(!getGift);
+  }
 
   let id: NodeJS.Timeout;
   useEffect(() => {
@@ -119,8 +125,8 @@ const GameComponent = ({
                 <Image
                   src="/User.svg"
                   alt="Avatar"
-                  width={130}
-                  height={130}
+                  width={120}
+                  height={120}
                   className="rounded-full"
                 />
               </div>
@@ -131,6 +137,12 @@ const GameComponent = ({
             <p className="mt-2 text-black font-semibold text-xl">
               Tap on coin to gain points
             </p>
+          </div>
+          <div ref={totalCoinsRef} className="absolute right-0 top-10 w-[150px] h-[80px] bg-white rounded-l-2xl text-black flex items-center justify-start pl-4">
+            <div className="flex flex-col justify-center items-center gap-2"><p className="font-mono text-xs">Tokens Available: </p><div className="font-mono flex flex-row gap-1 justify-between items-center w-full text-base">
+              <img src={"https://assets.coingecko.com/coins/images/26417/standard/Logo-Round_%281%29.png"} alt="token" className="w-4 h-4"/>
+                <span>{user?.token === 0 ? "200000" : user?.token}</span>
+              </div></div>
           </div>
         </div>
 
@@ -143,11 +155,12 @@ const GameComponent = ({
             </div>
             <div
               onClick={() => {
-                if (getGift){
-                  handleGiftClick();
-                } else {
-                  alert("No active gift available to claim"); 
-                }
+                // if (getGift){
+                //   handleGiftClick();
+                // } else {
+                //   alert("No active gift available to claim"); 
+                // }
+                setGetGift(!getGift);
               }}
               className="relative w-16 h-16 border-2 border-black z-20 flex items-center justify-center rounded-md overflow-hidden"
             >
@@ -177,6 +190,7 @@ const GameComponent = ({
             </div>
           </div>
         </div>
+        {getGift && <GiftBoxAnimation totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick}/>}
 
         {/* Bottom Section */}
         <div className="flex justify-between mt-auto h-20 gap-4 items-start">
