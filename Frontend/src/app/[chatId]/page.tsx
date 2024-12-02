@@ -18,7 +18,7 @@ export default function Home({ params }: { params: { chatId: string } }) {
   const [score, setScore] = useState<number>(0);
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state?.user);
-  console.log(user,'user');
+  console.log(user, 'user');
 
   const getData = async () => {
     try {
@@ -60,9 +60,7 @@ export default function Home({ params }: { params: { chatId: string } }) {
       ) : (
         <div className="h-screen overflow-hidden">
           {page === "landing" ? (
-            <LandingPage setPage={setPage} setPlay={setPlay} />
-          ) : page === "chat" ? (
-            <ChatWindow setPage={setPage} chatId={params?.chatId} />
+            <LandingPage chatId={params?.chatId} setPage={setPage} setPlay={setPlay} />
           ) : (
             <GameComponent
               play={play}

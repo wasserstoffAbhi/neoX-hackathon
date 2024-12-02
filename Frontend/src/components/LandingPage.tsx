@@ -1,12 +1,16 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const LandingPage = ({
   setPage,
   setPlay,
+  chatId,
 }: {
   setPage: (val: string) => void;
   setPlay: (val: boolean) => void;
+  chatId: string;
 }) => {
+  const router = useRouter();
   return (
     <div className="relative flex-col h-screen bg-[#EDF2E4]">
       {/* Bot Image */}
@@ -62,7 +66,7 @@ const LandingPage = ({
 
               {/* Chat Button */}
               <button
-                onClick={() => setPage("chat")}
+                onClick={() => router.push(`/${chatId}/chat`)}
                 className="border-2 border-[#222914] text-[#222914] py-3 px-14 rounded-lg text-xl font-semibold hover:bg-[#F0F2ED] transition-all"
               >
                 Chat

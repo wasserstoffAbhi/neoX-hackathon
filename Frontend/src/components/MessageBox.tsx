@@ -22,7 +22,7 @@ const MessageBox = ({
   const { loadingResponse } = useContext(SocketContext);
 
   return (
-    <div className="flex flex-col gap-4 dark:bg-dark-800 pt-2">
+    <div className="flex flex-col gap-4 dark:bg-dark-800 pt-2 border border-red-500">
       {index % 2 === 1 && (
         <div className="flex flex-col w-full flex-grow space-y-9 lg:space-y-0 lg:flex-row lg:justify-between lg:space-x-9">
           <div
