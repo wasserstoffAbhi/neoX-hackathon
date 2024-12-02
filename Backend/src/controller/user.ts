@@ -168,7 +168,6 @@ export class Users {
     try {
       const { chatId, avatarId } = req.body;
       await DbService.assignAvatarToUser(chatId,avatarId);
-
       return res.status(200).send({message:"Avatar Bought Successfully",data:null});
     } catch (error) {
       return res.status(500).send({message:"Failed to buy Avatar",data:null});

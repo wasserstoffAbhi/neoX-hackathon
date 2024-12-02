@@ -31,6 +31,7 @@ const GameComponent = ({
   const pointRef = useRef(score);
   const dispatch = useDispatch();
   const prevRef = useRef(score);
+  const [getGift, setGetGift] = useState(false);
   const { user } = useSelector((state: any) => state?.user);
 
   const handleCoinReachTop = () => {
@@ -47,7 +48,7 @@ const GameComponent = ({
     ]);
   };
 
-  let id: any;
+  let id: NodeJS.Timeout;
   useEffect(() => {
     if (isStart) {
       id = setInterval(async () => {
@@ -55,6 +56,11 @@ const GameComponent = ({
         const coin = pointRef.current;
         if (prevRef.current < coin) {
           let res = await updateScore(chatId, coin);
+          if (res?.swapActive) {
+            setGetGift(true);
+          } else {
+            setGetGift(false);
+          }
           if (res?.user) {
             if (res?.user?.points) {
               dispatch(setUser({ ...user, points: res?.user?.points }));
@@ -73,6 +79,18 @@ const GameComponent = ({
     };
   }, [isStart]);
 
+
+  const handleGiftClick = () => {
+    try{
+      // let res = await getGift(chatId);
+      // if(res?.gift){
+      //   setGetGift(false);
+      // }
+    }catch(err){
+      console.log(err);
+    }
+  }
+
   return (
     <div className="relative">
       {!isStart && (
@@ -81,7 +99,7 @@ const GameComponent = ({
             setPlay(!play);
             setIsStart(true);
           }}
-          className="absolute opacity-50 z-[50] border border-red-500 flex justify-center items-center bg-white h-[100vh] w-full"
+          className="absolute opacity-50 z-[50] flex justify-center items-center bg-white h-[100vh] w-full"
         >
           <p className="text-3xl">Tap to start</p>
         </div>
@@ -117,7 +135,30 @@ const GameComponent = ({
         </div>
 
         {/* Middle: Section */}
-        <div className="flex mt-20 justify-between">
+        <div className="flex mt-20 flex-col w-fit justify-between gap-4">
+          <div className={`relative flex flex-col items-center justify-center ${getGift ? 'animate-shake opacity-100 cursor-pointer' : 'opacity-40 cursor-not-allowed'}`}>
+            {/* Left: Chat and Booster */}
+            <div className="absolute z-1 top-1 left-0 w-full h-full border-b-2 rounded-lg border-black bg-[#687051]">
+
+            </div>
+            <div
+              onClick={() => {
+                if (getGift){
+                  handleGiftClick();
+                } else {
+                  alert("No active gift available to claim"); 
+                }
+              }}
+              className="relative w-16 h-16 border-2 border-black z-20 flex items-center justify-center rounded-md overflow-hidden"
+            >
+              {/* Chat Icon */}
+              <Image
+                src={'https://www.shutterstock.com/image-vector/red-mystery-gift-box-yellow-600nw-2264467581.jpg'}
+                alt="Chat Icon"
+                fill
+              />
+            </div>
+          </div>
           <div className="flex flex-col items-center justify-center">
             {/* Left: Chat and Booster */}
             <div

@@ -59,7 +59,6 @@ export default function Home({ params }: { params: { chatId: string } }) {
         </div>
       ) : (
         <div className="">
-          <AudioPlayer play={play} mute={isMute} />
           {page === "landing" ? (
             <LandingPage setPage={setPage} setPlay={setPlay} />
           ) : page === "chat" ? (

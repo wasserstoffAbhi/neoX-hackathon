@@ -84,3 +84,31 @@ export const getAllAvatars = async (chatId: string) => {
     return err.message;
   }
 };
+
+export const buyAvatarCall = async (chatId: string, avatarId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/buyAvatar`, { chatId, avatarId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const sellAvatarCall = async (chatId: string, avatarId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/sellAvatar`, { chatId, avatarId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
+export const setActiveAvatarCall = async (avatarId: string, chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/activeAvatar`, { avatarId, chatId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
