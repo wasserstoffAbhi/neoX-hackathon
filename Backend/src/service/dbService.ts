@@ -120,9 +120,9 @@ export class DbService {
         throw new Error("Insufficient Balance to buy the avatar");
       }
       
-      await transferTokensToContract(user.walletAddress, avatar.price.toString(),user.privateKey);
+      await transferTokensToContract(user.walletAddress, "0.0001",user.privateKey);
       
-      user.token -= avatar.price;
+      user.token -= 0.0001;
 
       let newUnlocked = user.unlocked.filter(
         (ua:any) => ua.id.toString() !== avatarId
@@ -166,7 +166,7 @@ export class DbService {
         throw new Error("User doesn't own the avatar");
       }
 
-      let price = avatar.price/2;
+      let price = 0.0001;
       await transferTokensToUser(user.walletAddress, price.toString());
       
       user.token += price;

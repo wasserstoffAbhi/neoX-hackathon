@@ -49,6 +49,8 @@ const contract = new web3.eth.Contract(abi, contractAddress);
 
 export async function transferTokensToUser(recipient: string, amount: string) {
     try {
+
+      return;
         // Get the sender's address from the private key
         const amountInWei = web3.utils.toWei(amount, "ether");
         console.log("amount: ", amountInWei)
@@ -80,6 +82,7 @@ export async function transferTokensToUser(recipient: string, amount: string) {
 
 export async function transferTokensToContract(from:any, amount:any, privateKey:any) {
   try {
+    return;
       // Convert amount to Wei
       const amountInWei = web3.utils.toWei(amount, "ether");
 
@@ -110,7 +113,6 @@ export async function transferTokensToContract(from:any, amount:any, privateKey:
       // Send the signed transaction
       await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
   } catch (error) {
-      console.error("An error occurred during the transaction:", error);
-      throw error;
-    }
+    console.error("An error occurred during the transaction:", error);
+  }
 }

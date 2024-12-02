@@ -10,7 +10,7 @@ const transactionSchema = new mongoose.Schema({
   gasPrice: { type: String, required: true }, // Store as string to accommodate large values
   gasUsed: { type: String, required: true }, // Store as string to accommodate large values
   blockNumber: { type: Number, required: true },
-  blockTimestamp: { type: Date, required: true }, // Assuming formattedDate is a date
+  blockTimestamp: { type: String, required: true }, // Assuming formattedDate is a date
   status: { type: String, enum: ['Success', 'Failure'], required: true }
 });
 

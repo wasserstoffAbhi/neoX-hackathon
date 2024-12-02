@@ -6,7 +6,7 @@ import Transaction from "../models/transactions";
 import { queryFilter,extractAndParseJSON, fetchReward, fetchAvatar, getRandomTapReward, getRandomTokenReward } from "../helper";
 import { getTransactionInfo } from "../service/txnHash";
 import { DbService } from "../service/dbService";
-import { transferTokensToUser } from "../wallet";
+import { transferTokensToContract, transferTokensToUser } from "../wallet";
 
 
 
@@ -23,7 +23,7 @@ export class Users {
       const user = await DbService.getUser(chatId);
       console.log(user)
       console.log(user?.points)
-      res.status(200).send({mesage:"User Found",data:user});
+      res.status(200).send({status:true,mesage:"User Found",data:user});
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch users", error });
     }
@@ -64,7 +64,7 @@ export class Users {
       // Save changes to the user
       await user.save();
   
-      return res.status(200).json({
+      return res.status(200).json({status:true,
         message: "Points updated successfully",
         user,
         swampActive,
@@ -78,12 +78,14 @@ export class Users {
   static getTransaction = async(req:Request,res:Response)=>{
     const { hash,chatId } = req.body;
     try {
+      const user = await User.findOne({chatId});
+      if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
       const transaction = await getTransactionInfo(hash);
-      if(!transaction) return res.status(200).send({message:"Transaction not found. Please try Again",data: null});
+      if(!transaction) return res.status(200).send({status:true,message:"Transaction not found. Please try Again",data: null});
       txnObj[chatId] = transaction;
       const txnSummary = await transactionDetails(hash,[],JSON.stringify(transaction));
-      console.log(txnSummary)
-      res.status(200).send({ message:"Transaction Found",data: {detail:transaction,explanation:txnSummary}});
+      await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
+      res.status(200).send({status:true, message:"Transaction Found",data: {detail:transaction,explanation:txnSummary}});
     } catch (error) { 
       res.status(500).json({ message: "Failed to fetch transaction. Please Try Again", data:null });
     }
@@ -94,8 +96,11 @@ export class Users {
     const { message, history, chatId } = req.body;
     const hash = ""
     try {
+      const user = await User.findOne({chatId});
+      if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
       const transaction = await transactionDetails(message,history,JSON.stringify(txnObj[chatId]));
-      res.status(200).send({ message:"Transaction Found",data: transaction});
+      await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
+      res.status(200).send({status:true, message:"Transaction Found",data: transaction});
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch transaction. Please Try Again", data:null });
     }
@@ -106,7 +111,7 @@ export class Users {
     const { message, history } = req.body;
     try {
       const neox = await neoXRag(message,history);
-      res.status(200).send({ message:"NeoX Found",data: neox});
+      res.status(200).send({status:true, message:"NeoX Found",data: neox});
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch NeoX. Please Try Again", data:null });
     }
@@ -114,10 +119,13 @@ export class Users {
 
 
   static fillWallet = async(req:Request,res:Response)=>{
-    const { walletAddress } = req.body;
+    const { walletAddress,chatId } = req.body;
     try {
-      const transaction = await getTransactions("0x8697477f54897ACADD7673B7c325ac31bd7F080d");
-      res.status(200).send({ message:"Transaction Found",data: "Wallet Has been synced with RPC. You can now query the wallet"});
+      const user = await User.findOne({chatId});
+      if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
+      await getTransactions("0x8697477f54897ACADD7673B7c325ac31bd7F080d");
+      await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
+      res.status(200).send({status:true, message:"Transaction Found",data: "Wallet Has been synced with RPC. You can now query the wallet"});
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch transaction. Please Try Again", data:null });
     }
@@ -125,28 +133,27 @@ export class Users {
 
 
   static queryWallet = async(req:Request,res:Response)=>{
-    const { message } = req.body;
+    const { message,chatId } = req.body;
     try {
+      const user = await User.findOne({chatId});
+      if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
       const query:any = await finalChain(message,[]);
-      console.log(query)
       const jsonObj = extractAndParseJSON(query);
-      console.log(jsonObj)
       if(jsonObj){
         const query = queryFilter(jsonObj);
         try {
           let qStr = JSON.stringify(query);
-          console.log(qStr)
           const transactions = await Transaction.find(query);
-          return res.status(200).send({ message:"Transactions Found",data: transactions});
+          await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
+          return res.status(200).send({status:true, message:"Transactions Found",data: transactions});
         } catch (error:any) {
           throw new Error(error);
         }
       }
       else {
-        return res.status(200).send({ message:"Error Parsing the Message please try again",data: null});
+        return res.status(200).send({status:true, message:"Error Parsing the Message please try again",data: null});
       }
     } catch (error) {
-      console.log(error)
       res.status(500).json({ message: "Failed to fetch transactions. Please Try Again", data:null });
     }
   }
@@ -155,7 +162,7 @@ export class Users {
     try {
       const {chatId} = req.body;
       const avatars = await DbService.getAvatars(chatId);
-      return res.status(200).send({message:"Avatars Found",data:avatars});
+      return res.status(200).send({status:true,message:"Avatars Found",data:avatars});
     } catch (error) {
       return res.status(500).send({message:"Failed to fetch Avatars",data:null});
     }
@@ -167,7 +174,7 @@ export class Users {
       const { chatId, avatarId } = req.body;
       await DbService.assignAvatarToUser(chatId,avatarId);
 
-      return res.status(200).send({message:"Avatar Bought Successfully",data:null});
+      return res.status(200).send({status:true,message:"Avatar Bought Successfully",data:null});
     } catch (error) {
       console.log(error)
       return res.status(500).send({message:"Failed to buy Avatar",data:null});
@@ -178,7 +185,7 @@ export class Users {
     try {
       const { chatId, avatarId } = req.body;
       await DbService.removeAvatarFromUser(chatId,avatarId);
-      return res.status(200).send({message:"Avatar Sold Successfully",data:null});
+      return res.status(200).send({status:true,message:"Avatar Sold Successfully",data:null});
     } catch (error) {
       return res.status(500).send({message:"Failed to sell Avatar",data:null});
     }
@@ -192,7 +199,7 @@ export class Users {
         return res.status(404).send({message:"User not found",data:null});
       }
       if(user.swampCount == 0){
-        return res.status(200).send({message:"No Swamp Available",data:null});
+        return res.status(200).send({status:true,message:"No Swamp Available",data:null});
       }
       user.swampCount -= 1;
       await user.save();
@@ -221,7 +228,7 @@ export class Users {
         );
         response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
       }
-      return res.status(200).send(response);
+      return res.status(200).send({status:true,response});
     } catch (error) {
       console.log(error)
       return res.status(500).send({message:"Failed to Swamp",data:null});
@@ -234,7 +241,7 @@ export class Users {
     try {
       const { chatId, avatarId } = req.body;
       await DbService.setActiveAvatar(chatId,avatarId);
-      return res.status(200).send({message:"Active Avatar Set Successfully",data:null});
+      return res.status(200).send({status:true,message:"Active Avatar Set Successfully",data:null});
     } catch (error) {
       return res.status(500).send({message:"Failed to set Active Avatar",data:null});
     }

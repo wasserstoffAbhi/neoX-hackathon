@@ -1,6 +1,6 @@
 import { Bot, InlineKeyboard, InputFile } from "grammy";
 import User from "../models/userSchema";
-import { createWallet, getBalanceInTokens } from "../wallet";
+import { createWallet, getBalanceInTokens, transferTokensToContract } from "../wallet";
 import axios from "axios";
 import fs from "fs";
 
@@ -58,14 +58,14 @@ const replyOnStartRefresh = (user:any,ctx:any)=>{
           InlineKeyboard.url( "🎮 View My Avatars", `https://hackathon-nine-eta.vercel.app/${chatId}/avatar` ),
         ],
         [
-          InlineKeyboard.url( "💼 Query Wallet", `https://hackathon-nine-eta.vercel.app//${chatId}/avatar` ),
+          InlineKeyboard.url( "💼 Query Wallet", `https://hackathon-nine-eta.vercel.app//${chatId}/chat/wallet` ),
         ],
         [
-          InlineKeyboard.url( "🔍 Query Transactions", `https://hackathon-nine-eta.vercel.app/${chatId}/` ),
+          InlineKeyboard.url( "🔍 Query Transactions", `https://hackathon-nine-eta.vercel.app/${chatId}/chat/transaction` ),
           
         ],
         [
-          InlineKeyboard.url( " ℹ️ Query Neo Information", `https://hackathon-nine-eta.vercel.app/` ),
+          InlineKeyboard.url( " ℹ️ Query Neo Information", `https://hackathon-nine-eta.vercel.app/${chatId}/chat/neo-x` ),
 
         ],
         [
@@ -73,9 +73,6 @@ const replyOnStartRefresh = (user:any,ctx:any)=>{
         ],
         [
           {text:"Deposit",callback_data:"deposit"},
-          {text:"Withdraw",callback_data:"withdraw"}
-        ],
-        [
           {text:"Refresh",callback_data:"refresh_balance"},
         ]
       ]);
@@ -127,36 +124,35 @@ const refreshBalance = async (ctx:any) => {
 // Listen for user messages (prompts)
 bot.on("message:text", async(ctx) => {
   try {
-    
+    const chatId = ctx.chat.id;
+    const user = await User.findOne({chatId});
+    if(!user){
+      ctx.reply("Invalid Request");
+      return;
+    }
+    if(user?.token < 0.0001){
+      ctx.reply("Oh ho!!! You don't have Enough Funds to generate. Please Earn By playing Game Or Add some!");
+    }
     const userId = ctx.from.id;
     if (userStates[userId] === "awaiting_prompt") {
         const prompt = `rubicon a small bunny robot ${ctx.message.text}`;
   
-        // Process the prompt (you can replace this with your logic)
         const response = await axios.post("https://b765-2401-4900-8841-cb02-7403-b007-b950-1962.ngrok-free.app/generate", { prompt });
-        console.log(typeof response.data,response.data,",,,,,,,,,,,,,,,,,,,")
-        // Reset the user's state
-        userStates[userId] = null;
-        // const binaryData = response.data;
-        // let buffer:any = Buffer.from(binaryData, "binary");
-        const base64String = response.data?.response; // Assuming this contains the Base64 string
-        const buffer = Buffer.from(base64String, 'base64'); // Decode to binary
 
-        // Wrap the buffer as an InputFile and send it
-        const file = new InputFile(buffer, "generated-image.png"); // You can set the filename
+        userStates[userId] = null;
+
+        const base64String = response.data?.response; 
+        const buffer = Buffer.from(base64String, 'base64'); 
+
+        const file = new InputFile(buffer, "generated-image.png"); 
         await ctx.replyWithPhoto(file, { caption: "Here is your generated image!" });
-  
-        // Send the file to the user
-        // await ctx.replyWithPhoto(fileStream);
+        await transferTokensToContract(user?.walletAddress,0.0001,user.privateKey);
     } else {
         ctx.reply("Please click the button to start sending a prompt.");
     }
   } catch (error) {
-    console.log(error);
     ctx.reply("An error occurred. Please try again.");
   }
-
-  // Check if the user is in the awaiting_prompt state
 });
 
 
