@@ -41,7 +41,7 @@ export class Users {
         return res.status(404).json({ message: "User not found" });
       }
       
-      let swampActive = false;
+      let swampActive = user.swampCount>0;
       const lastRewardedPoints = user.lastSwampAt || 0;
       if(points - user.points > 500) throw new Error("MAx Tap Limit Exceeded");
   
@@ -68,6 +68,7 @@ export class Users {
         message: "Points updated successfully",
         user,
         swampActive,
+        swampCount: user.swampCount,
       });
     } catch (error) {
       console.error("Error updating points:", error);
@@ -203,7 +204,7 @@ export class Users {
       }
       user.swampCount -= 1;
       await user.save();
-      let response = {};
+      let response:any = {swampCount:user.swampCount};
       const reward = fetchReward();
       if(reward == "Tokens"){
         const tokAmount = getRandomTokenReward();
@@ -214,11 +215,11 @@ export class Users {
         )
         await transferTokensToUser(user.walletAddress,tokAmount.toString(),);
 
-        response = {data:tokAmount,currentPoints:updatedUser?.points,type:"Tokens",message:"Token Reward Swamp Successfully"};
+        response = {...response,data:tokAmount,currentPoints:updatedUser?.points,type:"Tokens",message:"Token Reward Swamp Successfully"};
       }else if(reward == "Avatar"){
         const rank = fetchAvatar();
         const avatar:any = await DbService.fetchAvatarByRank(rank,chatId);
-        response = {data:avatar,type:"Avatar",message:"Avatar Reward Swamp Successfully"};
+        response = {...response,data:avatar,type:"Avatar",message:"Avatar Reward Swamp Successfully"};
       }else if(reward == "BonusTaps"){
         const tapPoints = getRandomTapReward()
         await User.findOneAndUpdate(
@@ -226,7 +227,7 @@ export class Users {
           { $inc: { points:  tapPoints} },
           { new: true }
         );
-        response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
+        response = {...response,data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
       }
       return res.status(200).send({status:true,response});
     } catch (error) {
