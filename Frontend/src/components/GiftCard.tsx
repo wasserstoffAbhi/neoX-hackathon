@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Confetti from './Coffeti/Coffetti';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateToken } from '../redux/features/userDetailsSlice';
+import { updatePoints, updateToken } from '../redux/features/userDetailsSlice';
+import { updateScore } from '../backendServices/userServices';
 
 
 
-const GiftCard = ({handleChangeGiftClick, animation, giftType = "Legendary Avatar", totalCoinsRef}: {handleChangeGiftClick: () => void, animation: any, giftType: string, totalCoinsRef: any}) => {
+const GiftCard = ({ref, setScore, handleChangeGiftClick, animation, giftType, totalCoinsRef, giftData}: {ref: any, setScore: any, handleChangeGiftClick: () => void, animation: any, giftType: string, totalCoinsRef: any, giftData: any}) => {
   const {rise, flipx} = animation;
   const dispatch = useDispatch<any>();
   const {user} = useSelector((state: any) => state.user);
@@ -46,7 +47,10 @@ const GiftCard = ({handleChangeGiftClick, animation, giftType = "Legendary Avata
       clonedCoin.addEventListener("transitionend", () => {
         clonedCoin.remove();
         if (i === coinCount - 1) {
-          dispatch(updateToken(user?.token + coinCount));
+          setScore((prev: any) => {
+            ref.current = prev + 1;
+            return prev + 1;
+          });
         }
       });
       
@@ -85,7 +89,7 @@ const GiftCard = ({handleChangeGiftClick, animation, giftType = "Legendary Avata
       clonedCoin.addEventListener("transitionend", () => {
         clonedCoin.remove();
         if (i === coinCount - 1) {
-          dispatch(updateToken(user?.token + coinCount));
+          dispatch(updateToken(coinCount));
         }
       });
       
@@ -108,16 +112,22 @@ const GiftCard = ({handleChangeGiftClick, animation, giftType = "Legendary Avata
           <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-mono font-bold'>You have won {giftType}</p>
         </div>
         <div className="flip-card-back bg-[#465235] flex flex-col items-center justify-center">
-          {giftType === "Legendary Avatar" ? 
-          <p>Avatar</p>
+          {giftType === "Avatar" ? 
+          <div className='relative flex flex-col justify-center items-center gap-4'>
+            <img src={giftData?.url} alt="avatar" className='w-20 h-20'/>
+            <button className='bg-white text-black px-4 py-2 rounded-md' onClick={() => {
+              handleChangeGiftClick();
+              handleGetTokens(giftData);
+            }}>Collect & Close</button>
+          </div>
            :
-            giftType === "tokens" ? 
+            giftType === "Tokens" ? 
           <div className='relative flex flex-col justify-center items-center gap-4'>
             <img ref={tokenRef} src={"https://assets.coingecko.com/coins/images/26417/standard/Logo-Round_%281%29.png"} alt="token" className="w-20 h-20"/>
             <span>{`Won ${token === undefined ? 0 : token} tokens`}</span>
             <button className='bg-white text-black px-4 py-2 rounded-md' onClick={() => {
               handleChangeGiftClick();
-              handleGetTokens(token);
+              handleGetTokens(giftData);
             }}>Collect & Close</button>
           </div> 
           :  
@@ -128,7 +138,7 @@ const GiftCard = ({handleChangeGiftClick, animation, giftType = "Legendary Avata
             <span>{`Won ${token === undefined ? 0 : token} Coins`}</span>
             <button className='bg-white text-black px-4 py-2 rounded-md' onClick={() => {
               handleChangeGiftClick();
-              handleGetCoins(token);
+              handleGetCoins(giftData);
             }}>Collect & Close</button>
           </div>} 
         </div>

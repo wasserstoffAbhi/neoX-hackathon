@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState, FC, useEffect, useRef } from "react";
 import BgImage from "./BgImage";
 import Coin from "./Coin";
-import { claimSwamp, updateScore } from "../backendServices/userServices";
+import { claimSwamp, getGiftSwampCall, updateScore } from "../backendServices/userServices";
 import { setUser } from "../redux/features/userDetailsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import GiftBoxAnimation from "./GiftBox";
@@ -32,7 +32,8 @@ const GameComponent = ({
   const pointRef = useRef(score);
   const dispatch = useDispatch();
   const prevRef = useRef(score);
-  const [getGift, setGetGift] = useState(true);
+  const [getGift, setGetGift] = useState(false);
+  const [giftData, setGiftData] = useState<any>(null);
   const { user } = useSelector((state: any) => state?.user);
 
   const totalCoinsRef = useRef<HTMLDivElement>(null);
@@ -76,7 +77,7 @@ const GameComponent = ({
           }
           console.log(res, 'response');
         }
-      }, 2000);
+      }, 3000);
     } else {
       clearInterval(id);
     }
@@ -86,24 +87,19 @@ const GameComponent = ({
   }, [isStart]);
 
 
-  const handleGiftClick = () => {
+  const handleGiftClick = async () => {
     try {
-      // let res = await getGift(chatId);
-      // if(res?.gift){
-      //   setGetGift(false);
-      // }
+      let res = await getGiftSwampCall(chatId);
+      console.log(res, 'res in swamp');
+      if(res?.data){
+        alert(`${res?.message} ${JSON.stringify(res)}`);
+        setGiftData(res);
+      }
     } catch (err) {
-      console.log(err);
+      alert(err);
     }
   }
 
-  // useEffect(() => {
-  //   const swamp = async () => {
-  //     let res = await claimSwamp(user?.chatId);
-  //     console.log(res, 'claim swamp');
-  //   }
-  //   swamp();
-  // }, []);
 
   return (
     <div className="relative">
@@ -149,7 +145,7 @@ const GameComponent = ({
           <div ref={totalCoinsRef} className="absolute right-0 top-10 w-[150px] h-[80px] bg-white rounded-l-2xl text-black flex items-center justify-start pl-4">
             <div className="flex flex-col justify-center items-center gap-2"><p className="font-mono text-xs">Tokens Available: </p><div className="font-mono flex flex-row gap-1 justify-between items-center w-full text-base">
               <img src={"https://assets.coingecko.com/coins/images/26417/standard/Logo-Round_%281%29.png"} alt="token" className="w-4 h-4" />
-              <span>{user?.token === 0 ? "200000" : user?.token}</span>
+              <span>{user?.token}</span>
             </div></div>
           </div>
         </div>
@@ -163,12 +159,11 @@ const GameComponent = ({
             </div>
             <div
               onClick={() => {
-                // if (getGift){
-                //   handleGiftClick();
-                // } else {
-                //   alert("No active gift available to claim"); 
-                // }
-                setGetGift(!getGift);
+                if (getGift){
+                  handleGiftClick();
+                } else {
+                  alert("No active gift available to claim"); 
+                }
               }}
               className="relative w-16 h-16 border-2 border-black z-20 flex items-center justify-center rounded-md overflow-hidden"
             >
@@ -198,7 +193,7 @@ const GameComponent = ({
             </div>
           </div>
         </div>
-        {getGift && <GiftBoxAnimation totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} />}
+        {getGift && giftData && <GiftBoxAnimation ref={pointRef} setScore={setScore} totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData} />}
 
         {/* Bottom Section */}
         <div className="flex justify-between mt-auto h-20 gap-4 items-start">
