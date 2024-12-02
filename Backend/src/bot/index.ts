@@ -40,17 +40,20 @@ bot.command("start", async (ctx) => {
   const keyboard = 
     new InlineKeyboard([
       [
-        InlineKeyboard.url( "🎮 Tap & Earn", "https://google.com" ),
+        InlineKeyboard.url( "🎮 Tap & Earn", `https://hackathon-nine-eta.vercel.app/${chatId}` ),
       ],
       [
-        InlineKeyboard.url( "💼 Query Wallet", "https://google.com" ),
+        InlineKeyboard.url( "🎮 View My Avatars", `https://hackathon-nine-eta.vercel.app/${chatId}/avatar` ),
       ],
       [
-        InlineKeyboard.url( "🔍 Query Transactions", "https://google.com" ),
+        InlineKeyboard.url( "💼 Query Wallet", `https://hackathon-nine-eta.vercel.app//${chatId}/avatar` ),
+      ],
+      [
+        InlineKeyboard.url( "🔍 Query Transactions", `https://hackathon-nine-eta.vercel.app/` ),
         
       ],
       [
-        InlineKeyboard.url( " ℹ️ Query Neo Information", "https://google.com" ),
+        InlineKeyboard.url( " ℹ️ Query Neo Information", `https://hackathon-nine-eta.vercel.app/` ),
 
       ],
       [
