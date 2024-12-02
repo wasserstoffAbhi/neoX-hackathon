@@ -13,13 +13,16 @@ bot.command("start", async (ctx) => {
   const username = ctx.chat.username;
   const chat = await bot.api.getChat(chatId);
   let user = await User.findOne({ chatId: chatId });
+  console.log(user)
   if (!user) {
+    
     user = new User({ chatId, username, points: 0 });
     await user.save();
+
     ctx.reply("Welcome! You are now registered.");
   } else {
     ctx.reply(
-      `Welcome back, ${username || "user"}! You have ${user.points} points.`
+      `Welcome back, ${username || "user"}! You have ${user.points} points ${user.walletAddress}.`
     );
   }
   

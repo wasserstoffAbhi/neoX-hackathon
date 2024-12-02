@@ -12,7 +12,6 @@ import { getTransactionInfo } from '../service/txnHash';
 
 export const startWebSocketServer = async(server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>)=>{
   try {
-    console.log("Websocket server started");
     const io = new Server(server,{
       connectTimeout: 120000,
       pingInterval: 120000,
