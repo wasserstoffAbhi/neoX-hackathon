@@ -32,6 +32,18 @@ export function createWallet(chatId:any) {
   return wallet;
 }
 
+export async function getBalanceInTokens(address:string) {
+  try {
+      const balanceWei = await web3.eth.getBalance(address); // Get balance in wei
+      const balanceEther = web3.utils.fromWei(balanceWei, 'ether'); // Convert wei to ether
+      const balanceAsNumber = parseFloat(balanceEther); // Convert to a number for database storage
+      return balanceAsNumber;
+  } catch (error) {
+      console.error('Error fetching balance:', error);
+      return null;
+  }
+}
+
 
 const contract = new web3.eth.Contract(abi, contractAddress);
 

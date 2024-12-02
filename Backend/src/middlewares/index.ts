@@ -6,7 +6,7 @@ export const hasValidAmount = (funcName: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { chatId } = req.body;
-
+      
       // Check if the user exists
       const user = await User.findOne({ chatId });
       if (!user) {

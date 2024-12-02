@@ -45,7 +45,7 @@ export async function getTransactions(address:string) {
         await Transaction.create(txn);
         await new Promise(resolve => setTimeout(resolve, 20000));
       }
-      await Wallet.create({ address: address,balance:balance,txnCount:203 });
+      await Wallet.create({ address: address,balance:balance,txnCount:count });
     }else {
       const transactions = await Transaction.find({ $or: [{ from: address }, { to: address }] });
       return transactions;

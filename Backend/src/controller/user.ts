@@ -43,7 +43,7 @@ export class Users {
       
       let swampActive = false;
       const lastRewardedPoints = user.lastSwampAt || 0;
-      if(user.points - points > 500) throw new Error("MAx Tap Limit Exceeded");
+      if(points - user.points > 500) throw new Error("MAx Tap Limit Exceeded");
   
       // Check if the points have crossed a 1K milestone since the last reward
       const milestonesCrossed = Math.floor(points / 10) - Math.floor(lastRewardedPoints / 10);
@@ -221,7 +221,7 @@ export class Users {
         );
         response = {data:tapPoints,type:"BonusTaps",message:"Bonus Taps Reward Swamp Successfully"};
       }
-      return res.status(200).send({response:"Swamp Successful",data:null});
+      return res.status(200).send(response);
     } catch (error) {
       console.log(error)
       return res.status(500).send({message:"Failed to Swamp",data:null});
