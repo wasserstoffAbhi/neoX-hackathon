@@ -204,9 +204,26 @@
   transform: rotate(145deg) translate(-70%, -170px);
 }
 
+.riseToSide {
+  animation: 1s riseToSide;
+}
+
 /* .flipx {
   animation: 1s flipx;
 } */
+
+@keyframes riseToSide {
+  0% {
+    bottom: 40%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    bottom: 90%;
+    transform: translate(100%, -100%) rotate(180deg);
+    opacity: 0;
+  }
+}
 
 @keyframes rise {
   0% {
