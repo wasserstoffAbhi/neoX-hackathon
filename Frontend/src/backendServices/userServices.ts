@@ -76,9 +76,18 @@ export const getSwamp = async () => {
   }
 };
 
+export const claimSwamp = async (id: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`, { chatId: id });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+
 export const getAllAvatars = async (chatId: string) => {
   try {
-    const { data } = await axios.post(`${API_URL}/avatars`, {chatId: chatId});
+    const { data } = await axios.post(`${API_URL}/avatars`, { chatId: chatId });
     return data;
   } catch (err: any) {
     return err.message;

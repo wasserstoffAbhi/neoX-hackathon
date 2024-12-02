@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState, FC, useEffect, useRef } from "react";
 import BgImage from "./BgImage";
 import Coin from "./Coin";
-import { updateScore } from "../backendServices/userServices";
+import { claimSwamp, updateScore } from "../backendServices/userServices";
 import { setUser } from "../redux/features/userDetailsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import GiftBoxAnimation from "./GiftBox";
@@ -62,7 +62,7 @@ const GameComponent = ({
         const coin = pointRef.current;
         if (prevRef.current < coin) {
           let res = await updateScore(chatId, coin);
-          if (res?.swapActive) {
+          if (res?.swampActive) {
             setGetGift(true);
           } else {
             setGetGift(false);
@@ -87,15 +87,23 @@ const GameComponent = ({
 
 
   const handleGiftClick = () => {
-    try{
+    try {
       // let res = await getGift(chatId);
       // if(res?.gift){
       //   setGetGift(false);
       // }
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   }
+
+  // useEffect(() => {
+  //   const swamp = async () => {
+  //     let res = await claimSwamp(user?.chatId);
+  //     console.log(res, 'claim swamp');
+  //   }
+  //   swamp();
+  // }, []);
 
   return (
     <div className="relative">
@@ -140,9 +148,9 @@ const GameComponent = ({
           </div>
           <div ref={totalCoinsRef} className="absolute right-0 top-10 w-[150px] h-[80px] bg-white rounded-l-2xl text-black flex items-center justify-start pl-4">
             <div className="flex flex-col justify-center items-center gap-2"><p className="font-mono text-xs">Tokens Available: </p><div className="font-mono flex flex-row gap-1 justify-between items-center w-full text-base">
-              <img src={"https://assets.coingecko.com/coins/images/26417/standard/Logo-Round_%281%29.png"} alt="token" className="w-4 h-4"/>
-                <span>{user?.token === 0 ? "200000" : user?.token}</span>
-              </div></div>
+              <img src={"https://assets.coingecko.com/coins/images/26417/standard/Logo-Round_%281%29.png"} alt="token" className="w-4 h-4" />
+              <span>{user?.token === 0 ? "200000" : user?.token}</span>
+            </div></div>
           </div>
         </div>
 
@@ -190,7 +198,7 @@ const GameComponent = ({
             </div>
           </div>
         </div>
-        {getGift && <GiftBoxAnimation totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick}/>}
+        {getGift && <GiftBoxAnimation totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} />}
 
         {/* Bottom Section */}
         <div className="flex justify-between mt-auto h-20 gap-4 items-start">
