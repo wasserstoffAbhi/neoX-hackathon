@@ -21,11 +21,16 @@ const userDetailsSlice = createSlice({
     },
     updateToken: (state, action: PayloadAction<any>) => {
       if (state.user){
-        state.user["token"] = action.payload;
+        state.user["token"] = state.user["token"] + action.payload;
       }
     },
+    updatePoints: (state, action: PayloadAction<any>) => {
+      if (state.user){
+        state.user["points"] = action.payload;
+      }
+    }
   },
 });
 
-export const { setUser, clearUser, setActiveAvatarId, updateToken } = userDetailsSlice.actions;
+export const { setUser, clearUser, setActiveAvatarId, updateToken, updatePoints } = userDetailsSlice.actions;
 export default userDetailsSlice.reducer;

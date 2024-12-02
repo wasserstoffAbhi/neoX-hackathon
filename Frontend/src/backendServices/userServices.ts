@@ -121,3 +121,12 @@ export const setActiveAvatarCall = async (avatarId: string, chatId: string) => {
   }
 };
 
+export const getGiftSwampCall = async (chatId: string) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/swamp`, { chatId });
+    return data;
+  } catch (err: any) {
+    return err.message;
+  }
+};
+

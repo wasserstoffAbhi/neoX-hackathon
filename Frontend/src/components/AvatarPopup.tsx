@@ -33,14 +33,15 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
                 try {
                     setLoadingState(true);
                     let res = await buyAvatarCall(chatId, key);
-                    if (res?.data) {
+                    if (res?.status) {
                         toast.success("Avatar buyed successfully");
+                        getAvatars();
+                        setOpen(false);
                     }
                     else {
                         toast.error(res?.message || "Error in buying the avatar")
                     }
                     setLoadingState(false);
-                    getAvatars();
                     console.log(res, 'response in buy avatar');
                 } catch (error) {
                     setLoadingState(false);

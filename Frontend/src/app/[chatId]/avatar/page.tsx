@@ -15,8 +15,8 @@ const Page = ({ params }: { params: { chatId: string } }) => {
     const { user } = useSelector((state: any) => state?.user);
     const { avatarData } = useSelector((state: any) => state?.avatarData);
     const [avatars, setAvatars] = useState<any>(null);
-    const [ownedAvatars, setOwnedAvatars] = useState<any>(null);
-    const [unlockedAvatars, setUnlockedAvatars] = useState<any>(null);
+    const [ownedAvatars, setOwnedAvatars] = useState<any>([]);
+    const [unlockedAvatars, setUnlockedAvatars] = useState<any>([]);
     const balance = 10000;
     const owned: any = {
         "1": "sdlfjal",

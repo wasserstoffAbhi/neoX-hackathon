@@ -320,7 +320,7 @@ const Chat = ({
               Let's Chat
             </p>
             <div className="border border-[#DFE2E8] max-w-screen-md p-5 w-[90%] rounded-[16px] flex flex-col gap-5">
-              {["wallet", "transactions", "neo-x"]?.map((el, i) => (
+              {["wallet", "transactions", "neo-x",]?.map((el, i) => (
                 <div
                   key={i}
                   onClick={() => router.push(`/${chatId}/chat/${el}`)}
