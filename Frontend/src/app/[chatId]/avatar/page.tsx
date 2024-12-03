@@ -108,7 +108,7 @@ const Page = ({ params }: { params: { chatId: string } }) => {
                                     <div className='absolute top-0 z-40 left-0 w-full h-full flex justify-center items-center'>
                                         <MdOutlineLock color='#000' size={25} /></div></>}
                                 <div className='font-medium font-mono text-center'>{avatars[key]}</div>
-                                <AvatarPopup getAvatars={getAvatars} chatId={params?.chatId} el={key} avatars={avatars} ownedAvatars={ownedAvatars} unlockedAvatars={unlockedAvatars} />
+                                {ownedAvatars && unlockedAvatars && avatars &&<AvatarPopup getAvatars={getAvatars} chatId={params?.chatId} el={key} avatars={avatars} ownedAvatars={ownedAvatars} unlockedAvatars={unlockedAvatars} />}
                                 {/* <div className='flex flex-col justify-center items-center'>
                                     {
                                         ownedAvatars?.find((elem: any) => elem?.id === `${key}`) || unlockedAvatars?.find((elem: any) => elem?.id === `${key}`) && <p onClick={() => {
