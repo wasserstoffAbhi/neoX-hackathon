@@ -159,6 +159,7 @@ export async function getTransactionInfo(transactionHash: string): Promise<any |
             blockTimestamp: formattedDate,
             status: receipt.status === 1 ? 'Success' : 'Failure',
         };
+        console.log(content);
         return content;
     } catch (error:any) {
         console.error('Error fetching transaction information:', error["stack"]);

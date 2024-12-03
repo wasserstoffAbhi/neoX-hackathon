@@ -29,7 +29,6 @@ export class DbService {
       let ava = avatarRank;
       // Fetch user based on chatId
       const user = await User.findOne({ chatId }).populate("avatar");
-      console.log(user);
       if (!user) {
         throw new Error("User not found");
       }

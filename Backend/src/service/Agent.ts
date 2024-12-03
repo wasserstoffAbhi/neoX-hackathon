@@ -10,6 +10,7 @@ import { queryLangauageSeperator } from './queryLangPrompt';
 dotenv.config();
 
 const chromaClient = new chromadb.ChromaClient({path:process.env.CHROMA_DB_URI});
+
 const modelName = 'text-embedding-3-large';
 const openAIApiKey= process.env.OPENAI_API_KEY as string;
 
@@ -65,7 +66,9 @@ export const transactionDetails = async(query:string, history:any, txnDetails: a
 
 export const neoXRag = async(query:string, history:any)=>{
     try {
+      console.log(await chromaClient.heartbeat())
       const collection = await chromaClient.getCollection({ name: "neoX", embeddingFunction: MyEmbeddingFunction });
+      console.log(collection)
       const queryResults = await collection.query({ queryTexts: [query], nResults:4 });
       const results = formatList(queryResults);
       const context =`
@@ -83,16 +86,18 @@ export const neoXRag = async(query:string, history:any)=>{
       const prompt = await neoXPrompt.format({context:context,history:history});
       const answer = await rLlm.invoke(prompt);
       return answer.content;
-    } catch (error) {
-        throw new Error();
+    } catch (error:any) {
+        throw new Error(error);
     }
 }
 
 export const finalChain = async( message: string,history: BaseMessage[])=>{
     try {
+      console.log(message);
       const neoXPrompt = PromptTemplate.fromTemplate(queryLangauageSeperator);
       const prompt = await neoXPrompt.format({query:message,history:history});
       const answer = await llm.invoke(prompt);
+      console.log(answer.content);
       return answer.content;
     } catch (error:any) {
       throw new Error(error)
