@@ -91,7 +91,7 @@ const generateAvatar =  async(ctx:any) => {
     const userId = ctx.from.id;
     userStates[userId] = "awaiting_prompt"; // Set user state
     await ctx.answerCallbackQuery(); // Respond to the callback
-    ctx.reply("Currently We Have Trained on One Avatar *Rubicorn*. \n Please enter your prompt:",{
+    ctx.reply("Currently We Have Trained on One Avatar *Rubicorn a cute Little Rabbit*. \n Please enter your prompt:",{
       parse_mode:"Markdown"
     });
     

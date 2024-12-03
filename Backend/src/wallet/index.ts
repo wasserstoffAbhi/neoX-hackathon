@@ -49,8 +49,6 @@ const contract = new web3.eth.Contract(abi, contractAddress);
 
 export async function transferTokensToUser(recipient: string, amount: string) {
     try {
-
-      return;
         // Get the sender's address from the private key
         const amountInWei = web3.utils.toWei(amount, "ether");
         console.log("amount: ", amountInWei)
@@ -82,7 +80,6 @@ export async function transferTokensToUser(recipient: string, amount: string) {
 
 export async function transferTokensToContract(from:any, amount:any, privateKey:any) {
   try {
-    return;
       // Convert amount to Wei
       const amountInWei = web3.utils.toWei(amount, "ether");
 
@@ -104,12 +101,8 @@ export async function transferTokensToContract(from:any, amount:any, privateKey:
           gas: gasEstimate,
           gasPrice: gasPrice,
       };
-
-      console.log("Transaction Details:", tx);
-
       // Sign the transaction
       const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-
       // Send the signed transaction
       await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
   } catch (error) {
