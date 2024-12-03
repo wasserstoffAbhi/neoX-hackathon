@@ -18,11 +18,8 @@ export class Users {
     
   static userdetails = async (req: Request, res: Response) => {
     try {
-      const chatId = req.body.chatId
-      console.log(chatId)
+      const chatId = req.body.chatId;
       const user = await DbService.getUser(chatId);
-      console.log(user)
-      console.log(user?.points)
       res.status(200).send({status:true,mesage:"User Found",data:user});
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch users", error });
@@ -78,16 +75,20 @@ export class Users {
 
   static getTransaction = async(req:Request,res:Response)=>{
     const { hash,chatId } = req.body;
+    console.log(hash,chatId);
     try {
       const user = await User.findOne({chatId});
       if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
       const transaction = await getTransactionInfo(hash);
+      console.log(transaction);
       if(!transaction) return res.status(200).send({status:true,message:"Transaction not found. Please try Again",data: null});
       txnObj[chatId] = transaction;
       const txnSummary = await transactionDetails(hash,[],JSON.stringify(transaction));
+      console.log(txnSummary);
       await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
-      res.status(200).send({status:true, message:"Transaction Found",data: {detail:transaction,explanation:txnSummary}});
+      res.status(200).send({status:true, message:"Transaction Found",data: {detail:[transaction],explanation:txnSummary}});
     } catch (error) { 
+      
       res.status(500).json({ message: "Failed to fetch transaction. Please Try Again", data:null });
     }
   }
@@ -99,6 +100,7 @@ export class Users {
     try {
       const user = await User.findOne({chatId});
       if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
+      console.log(txnObj[chatId]);
       const transaction = await transactionDetails(message,history,JSON.stringify(txnObj[chatId]));
       await transferTokensToContract(user?.walletAddress,"0.0001",user?.privateKey);
       res.status(200).send({status:true, message:"Transaction Found",data: transaction});
@@ -114,6 +116,7 @@ export class Users {
       const neox = await neoXRag(message,history);
       res.status(200).send({status:true, message:"NeoX Found",data: neox});
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: "Failed to fetch NeoX. Please Try Again", data:null });
     }
   }
@@ -138,8 +141,16 @@ export class Users {
     try {
       const user = await User.findOne({chatId});
       if(!user)return res.status(500).json({ message: "User Don't exist", data:null });
-      const query:any = await finalChain(message,[]);
-      const jsonObj = extractAndParseJSON(query);
+      // const query:any = await finalChain(message,[]);
+      const jsonObj = {
+        "$Argument": [
+          {
+            "$field": "amount",
+            "$op": "gt",
+            "$value": 1700
+          }
+        ]
+      }
       if(jsonObj){
         const query = queryFilter(jsonObj);
         try {
