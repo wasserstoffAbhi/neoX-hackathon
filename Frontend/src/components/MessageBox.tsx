@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, useContext } from "react";
+import { MutableRefObject, useContext, useEffect, useState } from "react";
 import ThreeDotLoader from "./ThreeDotLoader";
 import Image from "next/image";
 import moment from "moment";
@@ -20,10 +20,22 @@ const MessageBox = ({
   index: number;
 }) => {
   const { loadingResponse } = useContext(SocketContext);
+  const [parseData, setParseData] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const jsonData = JSON.parse(message?.value);
+      setParseData(jsonData);
+      // console.log(jsonData);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+    }
+
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 dark:bg-dark-800 pt-2">
-      {index % 2 === 1 && (
+      {index % 2 === 0 && message?.value && (
         <div className="flex flex-col w-full flex-grow space-y-9 lg:space-y-0 lg:flex-row lg:justify-between lg:space-x-9">
           <div
             ref={dividerRef}
@@ -58,7 +70,7 @@ const MessageBox = ({
           </div>
         </div>
       )}
-      {index % 2 === 0 && (
+      {index % 2 === 1 && message?.value && (
         <div className="flex flex-col gap-1 w-[80%] mr-auto">
           <div className={`flex flex-row w-full gap-2 items-end space-x-1`}>
             <div className="w-[25px] h-[25px]">
@@ -72,14 +84,51 @@ const MessageBox = ({
             >
               {message?.value}
             </p> */}
-            <Markdown
-              className={cn(
-                "prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0",
-                "max-w-none break-words w-full  bg-[#FAFCF8] font-poppins font-normal text-md dark:bg-dark-600 text-black dark:text-dark-100 text-start p-2 outline-none rounded-2xl rounded-bl-md"
-              )}
-            >
-              {message?.value ?? ""}
-            </Markdown>
+            <div className="w-full flex flex-col gap-2">
+              {
+                parseData && parseData?.length > 0 ? <div
+                  className={cn(
+                    "prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0",
+                    "max-w-none break-words w-full flex flex-col gap-5  bg-[#FAFCF8] font-poppins font-normal text-md dark:bg-dark-600 text-black dark:text-dark-100 text-start p-2 outline-none rounded-2xl rounded-bl-md"
+                  )}
+                >
+                  {
+                    parseData?.map((el: any, index: number) => <ul key={index} className="bg-[#eff5dd] p-3 rounded-xl">
+                      {
+                        Object.keys(el)?.map((key: string, ind) => <li key={(ind + 1) * 2000}>
+                          <span className="font-medium">{key}: </span> {el[key]}
+                        </li>)
+                      }
+                    </ul>)
+                  }
+                </div> : <Markdown
+                  className={cn(
+                    "prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0",
+                    "max-w-none break-words w-full  bg-[#FAFCF8] font-poppins font-normal text-md dark:bg-dark-600 text-black dark:text-dark-100 text-start p-2 outline-none rounded-2xl rounded-bl-md"
+                  )}
+                >
+                  {message?.value ?? ""}
+                </Markdown>
+              }
+              {
+                message?.detail && message?.detail?.length > 0 && <div
+                  className={cn(
+                    "prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0",
+                    "max-w-none break-words w-full flex flex-col gap-5  bg-[#FAFCF8] font-poppins font-normal text-md dark:bg-dark-600 text-black dark:text-dark-100 text-start p-2 outline-none rounded-2xl rounded-bl-md"
+                  )}
+                >
+                  {
+                    message?.detail?.map((el: any, index: number) => <ul key={index} className="bg-[#eff5dd] p-3 rounded-xl">
+                      {
+                        Object.keys(el)?.map((key: string, ind) => <li key={(ind + 1) * 2000}>
+                          <span className="font-medium">{key}: </span> {el[key]}
+                        </li>)
+                      }
+                    </ul>)
+                  }
+                </div>
+              }
+            </div>
           </div>
           <p className="text-sm text-[#6F7380] ml-10">
             {moment(message?.createdAt).format("LT")}

@@ -34,18 +34,29 @@ const Chat = ({
   // const { activeChat, setActiveChat } = useContext(SocketContext);
   const [isTransction, setIsTransaction] = useState(false);
   const [data, setData] = useState(null);
+  const [activeChat, setActiveChat] = useState<Message[]>([
+    {
+      value: "",
+      createdAt: new Date()
+    },
+    {
+      value: type === "Wallet" ? "Enter wallet address" : type === "Transactions" ? "Enter transaction hash" : "Ask anything about Neo-X",
+      createdAt: new Date()
+    }
+  ]);
   const {
     socketObj,
     setSocketObj,
-    activeChat,
-    setActiveChat,
+    // activeChat,
+    // setActiveChat,
     loadingResponse,
     setLoadingResponse,
   } = useContext(SocketContext);
-  const setMessage = (answer: string, newActiveChat: any) => {
+  const setMessage = (answer: string, newActiveChat: any, detail?: string) => {
     setLoadingResponse(true);
     newActiveChat.push({
       value: answer,
+      detail: detail,
       createdAt: new Date(),
     });
     setLoadingResponse(false);
@@ -168,7 +179,7 @@ const Chat = ({
           if (res?.data) {
             setData(res?.data);
             setIsTransaction(true);
-            setMessage(res?.data?.explanation, newActiveChat);
+            setMessage(res?.data?.explanation, newActiveChat, res?.data?.detail);
           } else setMessage(res?.message, newActiveChat);
           // api call on getTransactionInfo
           // if data is not null then show the data in the answer
@@ -276,8 +287,6 @@ const Chat = ({
       document.title = `ChatBot`;
     }
   }, [activeChat]);
-
-  console.log(activeChat, 'activeChat', type, 'type');
 
   const handleClick = (val: string) => {
     // setType(val);

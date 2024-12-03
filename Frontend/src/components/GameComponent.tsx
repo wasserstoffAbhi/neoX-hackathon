@@ -62,7 +62,7 @@ const GameComponent = ({
   useEffect(() => {
     if (isStart) {
       id = setInterval(async () => {
-        console.log(prevRef.current, pointRef?.current)
+        // console.log(prevRef.current, pointRef?.current)
         const coin = pointRef.current;
         if (prevRef.current < coin) {
           let res = await updateScore(chatId, coin);
@@ -75,10 +75,10 @@ const GameComponent = ({
             if (res?.user?.points) {
               dispatch(setUser({ ...user, points: res?.user?.points }));
             }
-            console.log('here');
+            // console.log('here');
             prevRef.current = coin;
           }
-          console.log(res, 'response');
+          // console.log(res, 'response');
         }
       }, 3000);
     } else {
@@ -93,7 +93,7 @@ const GameComponent = ({
   const handleGiftClick = async () => {
     try {
       let res = await getGiftSwampCall(chatId);
-      console.log(res, 'res in swamp');
+      // console.log(res, 'res in swamp');
       if (res?.data) {
         alert(`${res?.message} ${JSON.stringify(res)}`);
         setGiftData(res);
@@ -124,7 +124,7 @@ const GameComponent = ({
 
       <div className="flex w-full z-30 absolute top-0 flex-col bg-transparent h-screen p-4 bg-gray-900 text-white">
         {/* Top Section */}
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center relative z-[-10]">
           {/* Center: Score and Avatar */}
           <div className="flex flex-col items-center">
             <div className="relative flex items-center justify-center rounded-lg p-2">
