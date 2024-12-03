@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 export interface Message {
   value: any;
+  detail?: any;
   createdAt: any;
 }
 
