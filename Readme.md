@@ -51,7 +51,7 @@ We built a custom AI chatbot trained on data from Neo's whitepaper, NeoX documen
 - **https://hackathon-nine-eta.vercel.app/837414318**
 
 ## Demo Video Link
-- **https://drive.google.com/file/d/1k6ZgjWGha_w8scyFAF7nZA0ZhGdEBfOI/view?usp=sharing**
+- **https://www.loom.com/share/d293f6b5768d4277ba6a0dfc92974b69**
 
 ## Challenges
 
